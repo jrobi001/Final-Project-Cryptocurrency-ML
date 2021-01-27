@@ -9,13 +9,13 @@ const app = express();
 const port = 3000;
 
 // setting up sql database
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    database: 'cryptodata1',
-    password: 'cake123'
-});
-global.db = pool.promise();
+// const pool = mysql.createPool({
+//     host: 'localhost',
+//     user: 'root',
+//     database: 'cryptodata1',
+//     password: 'cake123'
+// });
+// global.db = pool.promise();
 
 
 // setting the default views path to /views
@@ -29,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // routes --------------------------------------------
+const testRoutes = require('./routes/testRoutes');
 app.use('/test', testRoutes);
 
 // last route checked if none others satisfied - 404 - not found
