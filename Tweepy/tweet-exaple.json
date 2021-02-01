@@ -1,0 +1,20 @@
+{
+    "id_str": null,
+    "from_user": null,
+    "text": null,
+    "created_at": null,
+    "time": null,
+    "geo_coordinates": null,
+    "user_lang": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "from_user_id_str": null,
+    "in_reply_to_status_id_str": null,
+    "source": null,
+    "profile_image_url": null,
+    "user_followers_count": null,
+    "user_friends_count": null,
+    "user_location": null,
+    "status_url": null,
+    "entities_str": null
+}

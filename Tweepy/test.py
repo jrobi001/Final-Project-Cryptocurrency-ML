@@ -7,7 +7,7 @@ from datetime import date
 this_folder = os.path.dirname(os.path.abspath(__file__))
 auth_file = os.path.join(this_folder, 'auth.txt')
 
-
+# Setting up Tweepy auth from strings stored in file ---------------------------
 auth_strings = []
 with open(auth_file) as f:
     for line in f:
@@ -18,16 +18,17 @@ access_token_secret = auth_strings[1]
 consumer_key = auth_strings[2]
 consumer_secret = auth_strings[3]
 
-
-# print(auth_strings)
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth)
+#-------------------------------------------------------------------------------
 
-search_term = "#bitcoin"
+#Date stuff
 today = date.today()
 print("Today's date:", today)
+
+search_term = "#bitcoin"
 
 # id_str	from_user	text	created_at	time	geo_coordinates	user_lang	in_reply_to_user_id_str	in_reply_to_screen_name	from_user_id_str	in_reply_to_status_id_str	source	profile_image_url	user_followers_count	user_friends_count	user_location	status_url	entities_str
 
