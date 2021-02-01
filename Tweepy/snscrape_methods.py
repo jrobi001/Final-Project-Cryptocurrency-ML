@@ -1,9 +1,6 @@
-import tweepy
 import os
-import csv
-import pandas as pd
 import glob
-from datetime import date, timedelta
+from datetime import timedelta
 
 
 def snscrape_tweets_hashtags(hashtags, since, until, folder):
@@ -47,7 +44,7 @@ def snscrape_separate_ids(hashtag, folder):
                 tweet_id = str(line).split("/")[-1].split("'")[0]
                 id_keys.append(tweet_id)
                 count += 1
-        # TODO: move files to storage folder after processed
+        # TODO: move files to storage folder after processed?
     # ensuring no duplicate keys
     id_keys = list(dict.fromkeys(id_keys))
     final_count = len(id_keys)

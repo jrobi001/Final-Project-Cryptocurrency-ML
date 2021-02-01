@@ -2,3 +2,4 @@ auth.txt
 snscrape-temp/
 __pycache__/
 .vscode/
+csv-tweet-files/
