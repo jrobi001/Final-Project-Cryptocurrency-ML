@@ -1,6 +1,7 @@
 import os
 import glob
 from datetime import timedelta
+import shutil
 
 
 def snscrape_tweets_hashtags(hashtags, since, until, folder):
@@ -16,9 +17,10 @@ def snscrape_tweets_hashtags(hashtags, since, until, folder):
     """
     day_before_until = until - timedelta(1)
     for hashtag in hashtags:
-        if not os.path.exists(f"{folder}{hashtag}"):
-            os.makedirs(f"{folder}{hashtag}")
-        command = f"snscrape twitter-search '#{hashtag} since:{since} until:{until}' >{folder}{hashtag}/sns-{hashtag}-{since}-to-{day_before_until}.txt"
+        hashtag_folder = os.path.join(folder, hashtag, "")
+        if not os.path.exists(hashtag_folder):
+            os.makedirs(hashtag_folder)
+        command = f"snscrape twitter-search '#{hashtag} since:{since} until:{until}' >{hashtag_folder}sns-{hashtag}-{since}-to-{day_before_until}.txt"
         print(command)
         os.system(command)
 
@@ -28,7 +30,7 @@ def snscrape_tweets_hashtags(hashtags, since, until, folder):
 def snscrape_separate_ids(hashtag, folder):
     # Might want to filter out duplicates shared between hashtags in future
     # or have them as a seperate list?
-    path = folder + hashtag + "/"
+    path = os.path.join(folder, hashtag, "")
     id_keys = []
     count = 0
     if not os.path.exists(path):
@@ -50,3 +52,14 @@ def snscrape_separate_ids(hashtag, folder):
     final_count = len(id_keys)
     print(f"{final_count} unique #{hashtag} tweet ids seperated with {final_count - count} duplicates removed")
     return id_keys
+
+
+def archive_old_snscrape_files(snscrape_temp_dir, hashtags, destination_dir):
+    if not os.path.exists(destination_dir):
+        os.makedirs(destination_dir)
+    for hashtag in hashtags:
+        hashtag_temp_dir = os.path.join(snscrape_temp_dir, hashtag)
+        file_names = os.listdir(hashtag_temp_dir)
+        for file in file_names:
+            shutil.move(os.path.join(hashtag_temp_dir, file), destination_dir)
+    return

@@ -3,3 +3,4 @@ snscrape-temp/
 __pycache__/
 .vscode/
 csv-tweet-files/
+snscrape-archive/

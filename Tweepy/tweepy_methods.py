@@ -14,7 +14,7 @@ def create_tweet_csv_entry_from_api_status(status):
     hashtags = extract_hastags_from_entities(status.entities['hashtags'])
     tweet = {
         "id_str": str(status.id_str),
-        "from_user": status.user.name,
+        "from_user": status.user.name,              # TODO: wrong name field
         "text": status.full_text.replace('\n', ' '),
         "created_at": str(status.created_at),
         # "time": null,
@@ -43,9 +43,9 @@ def chunkify_tweet_ids(tweet_id_list, chunk_size):
 
 
 def get_tweets_and_create_csv(tweepy_api, tweet_id_list, chunk_size, folder_path, name):
-    csv_path = folder_path + "/csv-tweet-files/"
-    if not os.path.exists(f"{csv_path}"):
-        os.makedirs(f"{csv_path}")
+    csv_path = os.path.join(folder_path, "csv-tweet-files", "")
+    if not os.path.exists(csv_path):
+        os.makedirs(csv_path)
     filename = csv_path + name + ".csv"
     print("writing to: " + name + ".csv")
     chunked_tweet_ids = list(chunkify_tweet_ids(tweet_id_list, chunk_size))

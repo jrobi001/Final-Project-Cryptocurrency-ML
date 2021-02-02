@@ -1,7 +1,7 @@
 import tweepy
 import os
 from datetime import date, timedelta
-from snscrape_methods import snscrape_tweets_hashtags, snscrape_separate_ids
+from snscrape_methods import snscrape_tweets_hashtags, snscrape_separate_ids, archive_old_snscrape_files
 from tweepy_methods import get_tweets_and_create_csv
 
 # Adapted from:
@@ -29,14 +29,14 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 
 # snscrape tweet id gathering---------------------------------------------------
-hashtags = ["bitcoin", "ethereum"]
 
 today = date.today()
 yesterday = today - timedelta(1)
 print("Today's date:", today)
 print("Collecting tweets from:", yesterday)
 
-snscrape_temp_folder = this_folder + "/snscrape-temp/"
+hashtags = ["bitcoin", "ethereum"]
+snscrape_temp_folder = os.path.join(this_folder, "snscrape-temp")
 
 snscrape_tweets_hashtags(hashtags, yesterday, today, snscrape_temp_folder)
 bitcoin_tweet_ids = snscrape_separate_ids(hashtags[0], snscrape_temp_folder)
@@ -68,3 +68,11 @@ get_tweets_and_create_csv(api, bitcoin_tweet_ids, chunk_size,
 ethereum_tweet_csv_name = f"{yesterday}-ethereum-tweets"
 get_tweets_and_create_csv(api, ethereum_tweet_ids, chunk_size,
                           this_folder, ethereum_tweet_csv_name)
+
+# archiving the temp snscrape files---------------------------------------------
+# so they aren't run the next day
+
+snscrape_archive_folder = os.path.join(this_folder, "snscrape-archive")
+
+archive_old_snscrape_files(snscrape_temp_folder, hashtags,
+                           snscrape_archive_folder)
