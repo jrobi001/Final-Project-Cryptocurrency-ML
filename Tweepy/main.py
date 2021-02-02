@@ -1,7 +1,7 @@
 import tweepy
 import os
 from datetime import date, timedelta
-from snscrape_methods import snscrape_tweets_hashtags, snscrape_separate_ids, archive_old_snscrape_files
+from snscrape_methods import snscrape_tweets_hashtags, snscrape_separate_ids, move_snscrape_files
 from tweepy_methods import get_tweets_and_create_csv
 
 # Adapted from:
@@ -35,12 +35,20 @@ yesterday = today - timedelta(1)
 print("Today's date:", today)
 print("Collecting tweets from:", yesterday)
 
-hashtags = ["bitcoin", "ethereum"]
+hashtags = ["ethereum", "eth", "btc", "bitcoin"]
 snscrape_temp_folder = os.path.join(this_folder, "snscrape-temp")
 
+# generating snsscrape files
 snscrape_tweets_hashtags(hashtags, yesterday, today, snscrape_temp_folder)
-bitcoin_tweet_ids = snscrape_separate_ids(hashtags[0], snscrape_temp_folder)
-ethereum_tweet_ids = snscrape_separate_ids(hashtags[1], snscrape_temp_folder)
+
+# moving/mergin related hashtags snscrape files to same folder
+move_snscrape_files(snscrape_temp_folder, ["btc"], os.path.join(
+    snscrape_temp_folder, "bitcoin"))
+move_snscrape_files(snscrape_temp_folder, ["eth"], os.path.join(
+    snscrape_temp_folder, "ethereum"))
+
+bitcoin_tweet_ids = snscrape_separate_ids("bitcoin", snscrape_temp_folder)
+ethereum_tweet_ids = snscrape_separate_ids("ethereum", snscrape_temp_folder)
 
 # seperating out duplicated tweets, to reduce API calls-------------------------
 shared_tweet_ids = list(
@@ -74,5 +82,5 @@ get_tweets_and_create_csv(api, ethereum_tweet_ids, chunk_size,
 
 snscrape_archive_folder = os.path.join(this_folder, "snscrape-archive")
 
-archive_old_snscrape_files(snscrape_temp_folder, hashtags,
-                           snscrape_archive_folder)
+move_snscrape_files(snscrape_temp_folder, hashtags,
+                    snscrape_archive_folder)
