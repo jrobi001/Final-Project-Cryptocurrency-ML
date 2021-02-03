@@ -67,15 +67,15 @@ chunk_size = 100
 
 shared_tweet_csv_name = f"{yesterday}-shared-tweets"
 get_tweets_and_create_csv(api, shared_tweet_ids, chunk_size,
-                          this_folder, shared_tweet_csv_name)
+                          this_folder, yesterday, shared_tweet_csv_name)
 
 bitcoin_tweet_csv_name = f"{yesterday}-bitcoin-tweets"
 get_tweets_and_create_csv(api, bitcoin_tweet_ids, chunk_size,
-                          this_folder, bitcoin_tweet_csv_name)
+                          this_folder, yesterday, bitcoin_tweet_csv_name)
 
 ethereum_tweet_csv_name = f"{yesterday}-ethereum-tweets"
 get_tweets_and_create_csv(api, ethereum_tweet_ids, chunk_size,
-                          this_folder, ethereum_tweet_csv_name)
+                          this_folder, yesterday, ethereum_tweet_csv_name)
 
 # archiving the temp snscrape files---------------------------------------------
 # so they aren't run the next day

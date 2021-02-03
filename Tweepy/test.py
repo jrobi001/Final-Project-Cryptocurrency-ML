@@ -1,21 +1,33 @@
 import os
 import shutil
+from datetime import date, timedelta
+
+today = date.today()
+yesterday = today - timedelta(1)
 
 this_folder = os.path.dirname(os.path.abspath(__file__))
-snscrape_temp_folder = os.path.join(this_folder, "snscrape-temp", "bitcoin")
-print(snscrape_temp_folder)
-files = os.listdir(snscrape_temp_folder)
-print(files)
-print(type(files))
-if files == []:
-    print("yes")
-if len(files) == 0:
-    print("no")
+csv_path = os.path.join(this_folder, "csv-tweet-files", str(yesterday), "")
+print(csv_path)
 
-hashtags = ["yes"]
+today = date.today() - timedelta(1)
+yesterday = today - timedelta(1)
+print(today, yesterday)
 
-for hashtag in hashtags:
-    print("works")
+# this_folder = os.path.dirname(os.path.abspath(__file__))
+# snscrape_temp_folder = os.path.join(this_folder, "snscrape-temp", "bitcoin")
+# print(snscrape_temp_folder)
+# files = os.listdir(snscrape_temp_folder)
+# print(files)
+# print(type(files))
+# if files == []:
+#     print("yes")
+# if len(files) == 0:
+#     print("no")
+
+# hashtags = ["yes"]
+
+# for hashtag in hashtags:
+#     print("works")
 
 
 # snscrape_archive_folder = os.path.join(this_folder, "snscrape-archive")
