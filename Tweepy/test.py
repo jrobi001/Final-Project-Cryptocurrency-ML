@@ -2,16 +2,21 @@ import os
 import shutil
 from datetime import date, timedelta
 
-today = date.today()
-yesterday = today - timedelta(1)
+current_folder = os.path.dirname(os.path.abspath(__file__))
+print(current_folder)
 
-this_folder = os.path.dirname(os.path.abspath(__file__))
-csv_path = os.path.join(this_folder, "csv-tweet-files", str(yesterday), "")
-print(csv_path)
+# -------------------------------------------------------------------------------
 
-today = date.today() - timedelta(1)
-yesterday = today - timedelta(1)
-print(today, yesterday)
+# today = date.today()
+# yesterday = today - timedelta(1)
+
+# this_folder = os.path.dirname(os.path.abspath(__file__))
+# csv_path = os.path.join(this_folder, "csv-tweet-files", str(yesterday), "")
+# print(csv_path)
+
+# today = date.today() - timedelta(1)
+# yesterday = today - timedelta(1)
+# print(today, yesterday)
 
 # this_folder = os.path.dirname(os.path.abspath(__file__))
 # snscrape_temp_folder = os.path.join(this_folder, "snscrape-temp", "bitcoin")
