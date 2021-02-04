@@ -35,7 +35,7 @@ yesterday = today - timedelta(1)
 print("Today's date:", today)
 print("Collecting tweets from:", yesterday)
 
-hashtags = ["ethereum", "eth", "btc", "bitcoin"]
+hashtags = ["ethereum", "eth", "btc", "bitcoin", "dogecoin", "doge"]
 snscrape_temp_folder = os.path.join(this_folder, "snscrape-temp")
 
 # generating snsscrape files
@@ -46,9 +46,12 @@ move_snscrape_files(snscrape_temp_folder, ["btc"], os.path.join(
     snscrape_temp_folder, "bitcoin"))
 move_snscrape_files(snscrape_temp_folder, ["eth"], os.path.join(
     snscrape_temp_folder, "ethereum"))
+move_snscrape_files(snscrape_temp_folder, ["doge"], os.path.join(
+    snscrape_temp_folder, "dogecoin"))
 
 bitcoin_tweet_ids = snscrape_separate_ids("bitcoin", snscrape_temp_folder)
 ethereum_tweet_ids = snscrape_separate_ids("ethereum", snscrape_temp_folder)
+dogecoin_tweet_ids = snscrape_separate_ids("dogecoin", snscrape_temp_folder)
 
 # seperating out duplicated tweets, to reduce API calls-------------------------
 shared_tweet_ids = list(
@@ -61,6 +64,7 @@ print(f"{len(shared_tweet_ids)} shared tweets found between tweet id lists")
 print("tweet list totals: bitcoin = {0}, ethereum = {1}, shared = {2}".format(
     len(bitcoin_tweet_ids), len(ethereum_tweet_ids), len(shared_tweet_ids)
 ))
+print(f"dogecoin tweets collected: {len(dogecoin_tweet_ids)}")
 
 # calling api and exporting to csv----------------------------------------------
 chunk_size = 100
@@ -76,6 +80,10 @@ get_tweets_and_create_csv(api, bitcoin_tweet_ids, chunk_size,
 ethereum_tweet_csv_name = f"{yesterday}-ethereum-tweets"
 get_tweets_and_create_csv(api, ethereum_tweet_ids, chunk_size,
                           this_folder, yesterday, ethereum_tweet_csv_name)
+
+dogecoin_tweet_csv_name = f"{yesterday}-dogecoin-tweets"
+get_tweets_and_create_csv(api, dogecoin_tweet_ids, chunk_size,
+                          this_folder, yesterday, dogecoin_tweet_csv_name)
 
 # archiving the temp snscrape files---------------------------------------------
 # so they aren't run the next day
