@@ -24,20 +24,26 @@ df['created_at'] = pd.to_datetime(df['created_at'])
 df = df.set_index(df['created_at'])
 df = df.sort_index()
 
-# for i in range(0, 24):
-
+# -------------------------------------------------------------------------------
+# method of grouping tweets by hour
+# https://realpython.com/pandas-groupby/#how-pandas-groupby-works
 df_hourly = df.groupby(pd.Grouper(key="created_at", freq='H'))
 
-for group in df_hourly:
-    print(group[0])
+# methods of iterating over grouped tweets by hour
+for group, frame in df_hourly:
+    print(group)
+    print(len(frame))
 
+hour, frame = next(iter(df_hourly))
+print(hour)
+print(frame.head(3))
+# -------------------------------------------------------------------------------
 
+# one method of making sure all entries have the right date.
 # for index, row in df.iterrows():
 #     print(row[3])
-# date_time = datetime.fromisoformat(row[3])
-# print(date_time)
-# date, time = date_time.date(), date_time.time()
-# if date != file_date:
-#     print(date)
-# if time.hour == 1:
-#     print(time)
+#     date_time = datetime.fromisoformat(row[3])
+#     print(date_time)
+#     date, time = date_time.date(), date_time.time()
+#     if date != file_date:
+#         print(date)
