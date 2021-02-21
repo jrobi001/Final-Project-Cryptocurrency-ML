@@ -64,6 +64,7 @@ def dataframe_from_tweet_csv(csv_path, sort_time_column=None):
         if len(error_df) > 0:
             print("there were some badly formatted tweets, these were removed")
             print(error_df)
+            print(error_df.shape)
         df = no_error_df
         df = df.set_index(df[sort_time_column])
         df = df.sort_index()
@@ -128,12 +129,21 @@ def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
     output_df = pd.DataFrame()
     for file in file_names:
         coin, file_date = get_hashtag_and_date_from_csv_title(file)
+        if coin == "dogecoin":
+            continue
         print(file)
         file_df = dataframe_from_tweet_csv(
             os.path.join(day_CSV_folder_path, file), 'created_at')
         print(f"Processing {len(file_df)} {coin} tweets from {file_date}")
-        df_check_no_duplicates(file_df)
-        df_check_all_same_date(file_df, file_date)
+        try:
+            df_check_no_duplicates(file_df)
+        except Exception:
+            # TODO: handle this better or replace checking method with method to remove duplicates
+            print("!!!!!!! Duplicates found!!!!!!!!!!!!!!!")
+        try:
+            df_check_all_same_date(file_df, file_date)
+        except Exception:
+            print("!!!!!!! Not all same date!!!!!!!!!!!!!!")
         file_df_hourly = df_group_by_hour(file_df, 'created_at')
         times = []
         counts = []
@@ -153,13 +163,18 @@ def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
 def new_df_all_days_hourly_tweetcount(all_days_folder_path):
     output_df = pd.DataFrame()
     daily_tweet_folders = os.listdir(all_days_folder_path)
-    daily_tweet_folders.sort(reverse=True)
+    daily_tweet_folders.sort(reverse=False)
     count = 0
     for folder in daily_tweet_folders:
         day_folder_path = os.path.join(all_days_folder_path, folder)
         single_day_df = new_df_single_day_hourly_tweetcount(day_folder_path)
-        print(single_day_df)
-
+        # print(single_day_df)
+        if count == 0:
+            output_df = single_day_df
+        else:
+            output_df = pd.concat(
+                [output_df, single_day_df], ignore_index=True)
+        count += 1
     return output_df
 
 
@@ -171,8 +186,14 @@ current_folder = os.path.dirname(os.path.abspath(__file__))
 tweepy_csv_master_folder = os.path.join(
     os.path.dirname(current_folder), 'Tweepy', 'csv-tweet-files')
 
+test_output_csv = os.path.join(current_folder, "test-out.csv")
+
 
 df = new_df_all_days_hourly_tweetcount(tweepy_csv_master_folder)
+print(df)
+print(df.size)
+
+df.to_csv(test_output_csv, index=False, header=True, mode='w+')
 
 trouble_day_folder = os.path.join(tweepy_csv_master_folder, '2021-02-16')
 

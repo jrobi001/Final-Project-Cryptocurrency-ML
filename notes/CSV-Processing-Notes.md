@@ -28,3 +28,10 @@
 
   https://analyticsindiamag.com/how-i-used-bidirectional-encoder-representations-from-transformers-bert-to-analyze-twitter-data/
 
+### Bad users:
+
+- Millionaire Box - 888729714105307136
+
+- MRCLEANCUT144
+- Software4iot
+
