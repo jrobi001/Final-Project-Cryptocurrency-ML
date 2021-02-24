@@ -129,8 +129,7 @@ def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
     output_df = pd.DataFrame()
     for file in file_names:
         coin, file_date = get_hashtag_and_date_from_csv_title(file)
-        if coin == "dogecoin":
-            continue
+
         print(file)
         file_df = dataframe_from_tweet_csv(
             os.path.join(day_CSV_folder_path, file), 'created_at')
@@ -183,8 +182,7 @@ def new_df_all_days_hourly_tweetcount(all_days_folder_path):
 # -------------------------------------------------------------------------------
 current_folder = os.path.dirname(os.path.abspath(__file__))
 
-tweepy_csv_master_folder = os.path.join(
-    os.path.dirname(current_folder), 'Tweepy', 'csv-tweet-files')
+tweepy_csv_master_folder = os.path.join(current_folder, "output-csv")
 
 test_output_csv = os.path.join(current_folder, "test-out.csv")
 
