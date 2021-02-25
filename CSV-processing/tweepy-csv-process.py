@@ -3,6 +3,12 @@ import time
 import os
 from datetime import date, datetime, timedelta
 
+# TODO's:
+# - Rename file, create docstrings, add comments, maybe rework method titles
+# - Move helper functions into own file and create main.py
+# - Implement basic sentiment analysis models and methods to run hourly/daily
+# - experimaent normalising the data? (perhpas better done in a notebook)
+
 # -------------------------------------------------------------------------------
 # Methods
 # -------------------------------------------------------------------------------
@@ -70,6 +76,8 @@ def dataframe_from_tweet_csv(csv_path, sort_time_column=None):
         df = df.sort_index()
     return df
 
+# -------------------------------------------------------------------------------
+
 
 def df_check_no_duplicates(dataframe):
     # region
@@ -85,6 +93,8 @@ def df_check_no_duplicates(dataframe):
     if dataframe['id_str'].duplicated().any():
         raise Exception("This CSV has duplicate id's")
     return
+
+# -------------------------------------------------------------------------------
 
 
 def df_check_all_same_date(dataframe, file_date):
@@ -106,9 +116,13 @@ def df_check_all_same_date(dataframe, file_date):
             f"Some tweets in the dataframe are not from {file_date}")
     return
 
+# -------------------------------------------------------------------------------
+
 
 def df_group_by_hour(dataframe, time_column):
     return dataframe.groupby(pd.Grouper(key=time_column, freq='H'))
+
+# -------------------------------------------------------------------------------
 
 
 def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
@@ -158,6 +172,8 @@ def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
         count += 1
     return output_df
 
+# -------------------------------------------------------------------------------
+
 
 def new_df_all_days_hourly_tweetcount(all_days_folder_path):
     output_df = pd.DataFrame()
@@ -193,10 +209,12 @@ print(df.size)
 
 df.to_csv(test_output_csv, index=False, header=True, mode='w+')
 
-trouble_day_folder = os.path.join(tweepy_csv_master_folder, '2021-02-16')
 
-# trouble_df = new_df_single_day_hourly_tweetcount(trouble_day_folder)
+# -------------------------------------------------------------------------------
+# testing
+# -------------------------------------------------------------------------------# trouble_df = new_df_single_day_hourly_tweetcount(trouble_day_folder)
 
+# trouble_day_folder = os.path.join(tweepy_csv_master_folder, '2021-02-16')
 
 # print(tweepy_csv_master_folder)
 # file_names = os.listdir(tweepy_csv_master_folder)
@@ -250,10 +268,6 @@ trouble_day_folder = os.path.join(tweepy_csv_master_folder, '2021-02-16')
 # print(dates)
 # boolean = df['id_str'].duplicated().any()
 # print(boolean)
-
-# -------------------------------------------------------------------------------
-# testing
-# -------------------------------------------------------------------------------
 
 # test1 = os.path.join(current_folder, 'input-csv',
 #                      '2021-02-11-ethereum-tweets.csv')

@@ -4,6 +4,16 @@ import os
 from datetime import date, datetime, timedelta
 import csv
 
+# TODO's:
+# - Rename file, create docstrings, add comments, maybe rework method titles
+# - possibly re-locate these methods to the collection process so that they are performed
+#  when tweets are collected. Keep only analysis processing here?
+# - Would Ideally like everything to run off of a single script
+
+# -------------------------------------------------------------------------------
+# Methods
+# -------------------------------------------------------------------------------
+
 
 def print_indexes_of_bad_format_tweets(csv_path):
     file_name = csv_path.split('/')[-1]
@@ -26,6 +36,8 @@ def print_indexes_of_bad_format_tweets(csv_path):
         print(f"total bad tweets = {count}")
     return
 
+# -------------------------------------------------------------------------------
+
 
 def print_bad_tweets_all_csvs(master_folder_path):
     daily_tweet_folders = os.listdir(master_folder_path)
@@ -39,6 +51,8 @@ def print_bad_tweets_all_csvs(master_folder_path):
             print_indexes_of_bad_format_tweets(file_path)
             print("-"*80)
     return
+
+# -------------------------------------------------------------------------------
 
 
 def delete_bad_tweets_csv(input_csv_path, output_csv_path):
@@ -65,8 +79,10 @@ def delete_bad_tweets_csv(input_csv_path, output_csv_path):
         print(f"total bad tweets = {count}")
     return
 
+# -------------------------------------------------------------------------------
 
-def delete_bad_tweets_all_csvs_create_new(input_master_folder, output_master_folder):
+
+def delete_bad_tweets_all_csvs_create_new(input_master_folder, output_master_folder, only_process_new=False):
     input_tweet_folders = os.listdir(input_master_folder)
     input_tweet_folders.sort(reverse=True)
 
@@ -83,12 +99,26 @@ def delete_bad_tweets_all_csvs_create_new(input_master_folder, output_master_fol
             input_file_path = os.path.join(input_day_folder_path, file)
             output_file_path = os.path.join(output_day_folder_path, file)
 
+            # if file already exists, don't process
+            if only_process_new == True:
+                if os.path.exists(output_file_path):
+                    continue
+
             delete_bad_tweets_csv(input_file_path, output_file_path)
     return
 
+# -------------------------------------------------------------------------------
+# Calls
+# -------------------------------------------------------------------------------
+
 
 this_folder = os.path.dirname(os.path.abspath(__file__))
-input_master = os.path.join(this_folder, "input-csv")
+original_master = os.path.join(os.path.dirname(
+    this_folder), "Tweepy", "csv-tweet-files")
+print(original_master)
+# input_master = os.path.join(this_folder, "input-csv")
+
 output_master = os.path.join(this_folder, "output-csv")
 
-delete_bad_tweets_all_csvs_create_new(input_master, output_master)
+delete_bad_tweets_all_csvs_create_new(
+    original_master, output_master, only_process_new=True)
