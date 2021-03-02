@@ -196,18 +196,18 @@ def new_df_all_days_hourly_tweetcount(all_days_folder_path):
 # -------------------------------------------------------------------------------
 # Calls
 # -------------------------------------------------------------------------------
-current_folder = os.path.dirname(os.path.abspath(__file__))
+# current_folder = os.path.dirname(os.path.abspath(__file__))
 
-tweepy_csv_master_folder = os.path.join(current_folder, "output-csv")
+# tweepy_csv_master_folder = os.path.join(current_folder, "output-csv")
 
-test_output_csv = os.path.join(current_folder, "test-out.csv")
+# test_output_csv = os.path.join(current_folder, "test-out.csv")
 
 
-df = new_df_all_days_hourly_tweetcount(tweepy_csv_master_folder)
-print(df)
-print(df.size)
+# df = new_df_all_days_hourly_tweetcount(tweepy_csv_master_folder)
+# print(df)
+# print(df.size)
 
-df.to_csv(test_output_csv, index=False, header=True, mode='w+')
+# df.to_csv(test_output_csv, index=False, header=True, mode='w+')
 
 
 # -------------------------------------------------------------------------------
