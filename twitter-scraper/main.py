@@ -1,16 +1,16 @@
 import tweepy
 import os
 from datetime import date, timedelta
-from snscrape_methods import snscrape_tweets_hashtags, snscrape_separate_ids, move_snscrape_files
-from tweepy_methods import get_tweets_and_create_csv
+from src.snscrape_methods import snscrape_tweets_hashtags, snscrape_separate_ids, move_snscrape_files
+from src.tweepy_methods import get_tweets_and_create_csv
 
 # TODO's:
-# - Rename folder to something better
-# - integrate in the CSV checks to the end of this script
-# - add comments, docstrings etc
-# - re-parameterise some methods and reduce the number of calls required here
+# - Rename folder to something better                                           [y]
+# - integrate in the CSV checks to the end of this script                       [n] - decided better to keep seperate
+# - add comments, docstrings etc                                                []
+# - re-parameterise some methods and reduce the number of calls required here   []
 # ideally only need the settings and 2-3 calls in this script
-# - investigate the 'bad' tweets (in test.py) and work out if there is a way
+# - investigate the 'bad' tweets (in test.py) and work out if there is a way    []
 # to eliminate them at collection time
 
 

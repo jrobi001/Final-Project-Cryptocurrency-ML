@@ -14,8 +14,8 @@ def create_tweet_csv_entry_from_api_status(status):
     hashtags = extract_hastags_from_entities(status.entities['hashtags'])
     tweet = {
         "id_str": str(status.id_str),
-        "from_user": status.user.name,              # TODO: wrong name field
-        "text": status.full_text.replace('\n', ' '),
+        "from_user": status.user.name,
+        "text": status.full_text.replace('\n', ' ').replace('\r', ' '),
         "created_at": str(status.created_at),
         # "time": null,
         "geo_coordinates": status.coordinates,

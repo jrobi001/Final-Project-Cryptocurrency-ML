@@ -114,11 +114,11 @@ def delete_bad_tweets_all_csvs_create_new(input_master_folder, output_master_fol
 
 this_folder = os.path.dirname(os.path.abspath(__file__))
 original_master = os.path.join(os.path.dirname(
-    this_folder), "Tweepy", "csv-tweet-files")
+    this_folder), "twitter-scraper", "csv-tweet-files")
 print(original_master)
 # input_master = os.path.join(this_folder, "input-csv")
 
-output_master = os.path.join(this_folder, "output-csv")
+output_master = os.path.join(os.path.dirname(this_folder), "tweet-csv-cleaned")
 
 delete_bad_tweets_all_csvs_create_new(
     original_master, output_master, only_process_new=True)
