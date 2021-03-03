@@ -176,6 +176,16 @@ def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
 
 
 def new_df_all_days_hourly_tweetcount(all_days_folder_path):
+    """returns a dataframe with a count of the tweets per hour for each coin. 
+    file names should be in the format of the twitter scraper: YYYY-MM-DD-COINNAME-tweets.csv.
+    Assumes files are stored in date folders. columns are set to the 'COINNAME' in the csv title.
+
+    Args:
+        all_days_folder_path (string): absolute or relative path to the master tweet folder to process
+
+    Returns:
+        pandas.DataFrame: dataframe of tweetcounts per hour for each coin identifed from the files passed
+    """
     output_df = pd.DataFrame()
     daily_tweet_folders = os.listdir(all_days_folder_path)
     daily_tweet_folders.sort(reverse=False)
@@ -198,9 +208,10 @@ def new_df_all_days_hourly_tweetcount(all_days_folder_path):
 # -------------------------------------------------------------------------------
 # current_folder = os.path.dirname(os.path.abspath(__file__))
 
-# tweepy_csv_master_folder = os.path.join(current_folder, "output-csv")
+# tweepy_csv_master_folder = os.path.join(
+#     os.path.dirname(current_folder), "tweet-csv-cleaned")
 
-# test_output_csv = os.path.join(current_folder, "test-out.csv")
+# test_output_csv = os.path.join(current_folder, "hourly_tweetcount.csv")
 
 
 # df = new_df_all_days_hourly_tweetcount(tweepy_csv_master_folder)
