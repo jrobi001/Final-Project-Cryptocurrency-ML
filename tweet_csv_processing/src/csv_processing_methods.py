@@ -1,16 +1,113 @@
 import pandas as pd
-import time
 import os
-from datetime import date, datetime, timedelta
+from datetime import datetime
+import csv
 
 # TODO's:
-# - Rename file, create docstrings, add comments, maybe rework method titles
-# - Move helper functions into own file and create main.py
-# - Implement basic sentiment analysis models and methods to run hourly/daily
+# - Create docstrings, add comments, maybe rework method titles
 # - experimaent normalising the data? (perhpas better done in a notebook)
 
+
 # -------------------------------------------------------------------------------
-# Methods
+# Delete Bad Tweet Methods
+# -------------------------------------------------------------------------------
+
+
+def print_indexes_of_bad_format_tweets(csv_path):
+    file_name = csv_path.split('/')[-1]
+    print(file_name)
+    with open(csv_path) as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        line = 0
+        count = 0
+        good_len = 0
+        for row in reader:
+            line += 1
+            if line == 1:
+                good_len = len(row)
+                print(good_len)
+            if row == []:
+                continue
+            if len(row) != good_len:
+                print(f"bad tweet on line {line}")
+                count += 1
+        print(f"total bad tweets = {count}")
+    return
+
+# -------------------------------------------------------------------------------
+
+
+def print_bad_tweets_all_csvs(master_folder_path):
+    daily_tweet_folders = os.listdir(master_folder_path)
+    daily_tweet_folders.sort(reverse=True)
+    for folder in daily_tweet_folders:
+        day_folder_path = os.path.join(master_folder_path, folder)
+        file_names = os.listdir(day_folder_path)
+        file_names.sort()
+        for file in file_names:
+            file_path = os.path.join(day_folder_path, file)
+            print_indexes_of_bad_format_tweets(file_path)
+            print("-"*80)
+    return
+
+# -------------------------------------------------------------------------------
+
+
+def delete_bad_tweets_csv(input_csv_path, output_csv_path):
+    file_name = input_csv_path.split('/')[-1]
+    print(file_name)
+    with open(input_csv_path) as csv_file, open(output_csv_path, 'w') as out:
+        writer = csv.writer(out)
+        reader = csv.reader(csv_file, delimiter=',')
+        line = 0
+        count = 0
+        good_len = 0
+        for row in reader:
+            line += 1
+            if line == 1:
+                good_len = len(row)
+            if row == []:
+                continue
+
+            if len(row) != good_len:
+                print(f"bad tweet on line {line} removed")
+                count += 1
+            else:
+                writer.writerow(row)
+        print(f"total bad tweets = {count}")
+    return
+
+# -------------------------------------------------------------------------------
+
+
+def delete_bad_tweets_all_csvs_create_new(input_master_folder, output_master_folder, only_process_new=False):
+    input_tweet_folders = os.listdir(input_master_folder)
+    input_tweet_folders.sort(reverse=True)
+
+    for folder in input_tweet_folders:
+        input_day_folder_path = os.path.join(input_master_folder, folder)
+        file_names = os.listdir(input_day_folder_path)
+        file_names.sort()
+
+        output_day_folder_path = os.path.join(output_master_folder, folder)
+        if not os.path.exists(output_day_folder_path):
+            os.makedirs(output_day_folder_path)
+
+        for file in file_names:
+            input_file_path = os.path.join(input_day_folder_path, file)
+            output_file_path = os.path.join(output_day_folder_path, file)
+
+            # if file already exists, don't process
+            if only_process_new == True:
+                if os.path.exists(output_file_path):
+                    continue
+
+            delete_bad_tweets_csv(input_file_path, output_file_path)
+    return
+
+
+# -------------------------------------------------------------------------------
+# Processing Methods
 # -------------------------------------------------------------------------------
 
 
@@ -201,24 +298,6 @@ def new_df_all_days_hourly_tweetcount(all_days_folder_path):
                 [output_df, single_day_df], ignore_index=True)
         count += 1
     return output_df
-
-
-# -------------------------------------------------------------------------------
-# Calls
-# -------------------------------------------------------------------------------
-# current_folder = os.path.dirname(os.path.abspath(__file__))
-
-# tweepy_csv_master_folder = os.path.join(
-#     os.path.dirname(current_folder), "tweet-csv-cleaned")
-
-# test_output_csv = os.path.join(current_folder, "hourly_tweetcount.csv")
-
-
-# df = new_df_all_days_hourly_tweetcount(tweepy_csv_master_folder)
-# print(df)
-# print(df.size)
-
-# df.to_csv(test_output_csv, index=False, header=True, mode='w+')
 
 
 # -------------------------------------------------------------------------------

@@ -11,7 +11,7 @@ import csv
 # - Would Ideally like everything to run off of a single script
 
 # -------------------------------------------------------------------------------
-# Methods
+# Delete Bad Tweet Methods
 # -------------------------------------------------------------------------------
 
 

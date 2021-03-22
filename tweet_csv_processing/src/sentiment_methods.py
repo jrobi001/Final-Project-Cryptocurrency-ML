@@ -1,8 +1,14 @@
-from tweepy_csv_process import *
+from .csv_processing_methods import *
 import pandas as pd
 import os
 import re
 from textblob import TextBlob
+
+# TODO:
+# - Adapt sentiment method to create hourly and daily breakdowns at the same time
+# - Adapt sentiment method to only run on 'new' tweets - append to the old file
+# - maybe try running a different sentiment model
+# - Add docstrings, comments etc.
 
 
 def clean_text(text, remove_mentions=True, remove_hashtags=True, remove_links=True, filter_alphanumeric=True):
@@ -97,34 +103,6 @@ def new_df_all_days_sentiment(all_days_folder_path, drop_zero_values=False, clea
             output_df = pd.concat([output_df, day_df], ignore_index=True)
         day_count += 1
     return output_df
-
-# -------------------------------------------------------------------------------
-# Calls
-# -------------------------------------------------------------------------------
-
-
-this_folder = os.path.dirname(os.path.abspath(__file__))
-csv_master_folder = os.path.join(
-    os.path.dirname(this_folder), "tweet-csv-cleaned")
-
-
-daily_sentiment_csv_no_zero = os.path.join(
-    this_folder, "daily_sentiment_no_zero.csv")
-
-daily_sentiment_df = new_df_all_days_sentiment(
-    csv_master_folder, drop_zero_values=True)
-
-daily_sentiment_df.to_csv(
-    daily_sentiment_csv_no_zero, index=False, header=True, mode='w+')
-
-
-daily_sentiment_csv = os.path.join(this_folder, "daily_sentiment.csv")
-
-daily_sentiment_df = new_df_all_days_sentiment(
-    csv_master_folder, drop_zero_values=False)
-
-daily_sentiment_df.to_csv(
-    daily_sentiment_csv, index=False, header=True, mode='w+')
 
 
 # -------------------------------------------------------------------------------
