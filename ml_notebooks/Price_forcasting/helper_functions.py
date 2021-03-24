@@ -42,8 +42,6 @@ def plot_simple_loss(history, title):
 
 
 def normalise_data(dataframe, num_training, num_validation):
-    num_training = 12000
-    num_validation = 7000
     test_samples = len(dataframe) - (num_training + num_validation)  # 5936
 
     # setting values to end sample for each
