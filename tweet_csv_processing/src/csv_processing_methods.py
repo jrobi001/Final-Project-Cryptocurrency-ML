@@ -155,23 +155,30 @@ def dataframe_from_tweet_csv(csv_path, sort_time_column=None):
         df = df.append(chunk)
 
     if sort_time_column:
-        # 'coerce' used as had a column error - string 'en' in the date field
-        # likely ueser_lang somehow ended up in the date colum...
-        # TODO: investigate this further and maybe separate out dropped columns for inspection
-        df[sort_time_column] = pd.to_datetime(
-            df[sort_time_column], errors='coerce')
-        # dropping anomolous rows
-        # https://stackoverflow.com/questions/34296292/pandas-dropna-store-dropped-rows
-        no_error_df = df.dropna(subset=[sort_time_column])
-        error_df = df[~df.index.isin(no_error_df.index)]
-        if len(error_df) > 0:
-            print("there were some badly formatted tweets, these were removed")
-            print(error_df)
-            print(error_df.shape)
-        df = no_error_df
-        df = df.set_index(df[sort_time_column])
-        df = df.sort_index()
+        df = df_sort_datetime_column(df, sort_time_column)
     return df
+
+# ------------------------------------------------------------------------------
+
+
+def df_sort_datetime_column(df, datetime_column):
+    # 'coerce' used as badly formatted tweets were created with data in wrong
+    # columns occasionally (by users using strange charecters in tweets)
+    # (most of these have now been filtered out at collection time)
+    df[datetime_column] = pd.to_datetime(df[datetime_column], errors='coerce')
+    # dropping anomolous rows
+    # https://stackoverflow.com/questions/34296292/pandas-dropna-store-dropped-rows
+    no_error_df = df.dropna(subset=[datetime_column])
+    error_df = df[~df.index.isin(no_error_df.index)]
+    if len(error_df) > 0:
+        print("there were some tweets with bad timestamps, these were removed")
+        print(error_df)
+        print(error_df.shape)
+    df = no_error_df
+    df = df.set_index(df[datetime_column])
+    df = df.sort_index()
+    return df
+
 
 # ------------------------------------------------------------------------------
 
@@ -298,6 +305,17 @@ def new_df_all_days_hourly_tweetcount(all_days_folder_path):
                 [output_df, single_day_df], ignore_index=True)
         count += 1
     return output_df
+
+
+# ------------------------------------------------------------------------------
+
+
+def get_last_date_csv(csv_file_path, time_column):
+    # TODO: might need to handle empty file, or non-existent files
+    file_df = dataframe_from_tweet_csv(csv_file_path, time_column)
+    # could be rewritten as a single step, but
+    date = file_df[time_column].dt.date.max()
+    return date
 
 
 # ------------------------------------------------------------------------------

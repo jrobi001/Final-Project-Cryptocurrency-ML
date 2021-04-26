@@ -3,6 +3,7 @@ from .csv_processing_methods import *
 import pandas as pd
 import os
 import re
+import numpy as np
 from textblob import TextBlob
 
 # TODO:
@@ -116,13 +117,11 @@ def new_df_all_days_sentiment(all_days_folder_path, drop_zero_values=False, clea
 
 
 # ------------------------------------------------------------------------------
-def get_continue_date_existing_files(processed_csv):
-    
-    return
 
-# ------------------------------------------------------------------------------
-
-
+# TODO: modify to take hashtag/filename input and only process those files
+# also add option to merge with another file e.g. the shared tweets
+# should return an hourly and daily df of sentiment for a hashtag (as collected by scraper)
+# can then combine that df with
 def sentiment_hourly_and_daily_all(all_days_folder_path):
     # load in date to process from, can make a function to get this date from existing sentiment files
     daily_output_df = pd.DataFrame()
@@ -210,9 +209,127 @@ def sentiment_hourly_and_daily_all(all_days_folder_path):
         day_count += 1
     return daily_output_df, hourly_output_df
 
-# -------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+
+def df_hashtag_csv_process_daily_hourly(all_days_folder_path, hashtag, merge_hashtag=None, continue_date=None):
+    daily_output_df = pd.DataFrame()
+    hourly_output_df = pd.DataFrame()
+    daily_tweet_folders = os.listdir(all_days_folder_path)
+    daily_tweet_folders.sort(reverse=False)
+    day_count = 0
+    for folder in daily_tweet_folders:
+        day_df = pd.DataFrame()         # output df, daily breakdown
+        hourly_df = pd.DataFrame()      # output df, hourly breakdown
+        hashtag_df = pd.DataFrame()     # df to store original data from files
+
+        # skipping if already processed before (continue date provided)
+        if continue_date:
+            folder_date = datetime.fromisoformat(folder).date()
+            if folder_date <= continue_date:
+                continue
+
+        day_folder_path = os.path.join(all_days_folder_path, folder)
+        file_names = os.listdir(day_folder_path)
+        file_names.sort()
+        file_names = np.asarray(file_names)
+
+        # only selecting files which contain the hashtag string (in title)
+        hashtag_files = file_names[np.flatnonzero(
+            np.char.find(file_names, hashtag) != -1)]
+
+        # if plan to merge files, add those files to those to be processed
+        if merge_hashtag:
+            merge_files = file_names[np.flatnonzero(
+                np.char.find(file_names, merge_hashtag) != -1)]
+            hashtag_files = np.append(hashtag_files, merge_files)
+
+        print(hashtag_files)
+        if len(hashtag_files) == 0:
+            continue
+
+        # merging all the files into a single dataframe (if multiple)
+        for file in hashtag_files:
+            file_path = os.path.join(day_folder_path, file)
+            file_df = dataframe_from_tweet_csv(file_path, 'created_at')
+            hashtag_df = hashtag_df.append(file_df)
+
+        # re-sorting by the time column
+        # may not be needed as grouper probably handles fine if unsorted...
+        # TODO: test removing this later
+        hashtag_df = df_sort_datetime_column(hashtag_df, 'created_at')
+
+        # just using this to get the file date
+        coin, date = get_hashtag_and_date_from_csv_title(hashtag_files[0])
+        print(f"processing {hashtag} from {date}")
+
+        hashtag_df_hourly = df_group_by_hour(hashtag_df, 'created_at')
+
+        times = []
+        hourly_polarity_zeros = []
+        hourly_polarity_no_zeros = []
+        hourly_subjectivity_zeros = []
+        hourly_subjectivity_no_zeros = []
+        hashtag_df = []
+        counts = []
+
+        for group, frame in hashtag_df_hourly:
+            times.append(group)
+            counts.append(len(frame))
+            frame = sentiment_df_from_tweet_df(frame)
+            hour_polarity_zeros, hour_subjectivity_zeros = mean_polarity_subjectivity(
+                frame, drop_zero_values=False)
+            hour_polarity_no_zeros, hour_subjectivity_no_zeros = mean_polarity_subjectivity(
+                frame, drop_zero_values=True)
+            hourly_polarity_zeros.append(hour_polarity_zeros)
+            hourly_polarity_no_zeros.append(hour_polarity_no_zeros)
+            hourly_subjectivity_zeros.append(hour_subjectivity_zeros)
+            hourly_subjectivity_no_zeros.append(hour_subjectivity_no_zeros)
+            hashtag_df.append(frame)
+
+        hashtag_df = pd.concat(hashtag_df)
+        file_polarity_no_zeros, file_subjectivity_no_zeros = mean_polarity_subjectivity(
+            hashtag_df, drop_zero_values=True)
+        file_polarity_zeros, file_subjectivity_zeros = mean_polarity_subjectivity(
+            hashtag_df, drop_zero_values=True)
+
+        sum_counts = sum(counts)
+
+        day_sentiment_dict = {
+            'date': [date],
+            f'{hashtag}_count': sum_counts,
+            f'{hashtag}_polarity': file_polarity_no_zeros,
+            f'{hashtag}_subjectivity': file_subjectivity_no_zeros,
+            f'{hashtag}_polarity_zeros': file_polarity_zeros,
+            f'{hashtag}_subjectivity_zeros': file_subjectivity_zeros}
+        day_df = pd.DataFrame(day_sentiment_dict)
+
+        hourly_sentiment_dict = {
+            'time': times,
+            f'{hashtag}_count': counts,
+            f'{hashtag}_polarity': hourly_polarity_no_zeros,
+            f'{hashtag}_subjectivity': hourly_subjectivity_no_zeros,
+            f'{hashtag}_polarity_zeros': hourly_polarity_zeros,
+            f'{hashtag}_subjectivity_zeros': hourly_subjectivity_zeros}
+        hourly_df = pd.DataFrame(hourly_sentiment_dict)
+
+    if day_count == 0:
+        daily_output_df = day_df
+        hourly_output_df = hourly_df
+    else:
+        daily_output_df = pd.concat(
+            [daily_output_df, day_df], ignore_index=True)
+        hourly_output_df = pd.concat(
+            [hourly_output_df, hourly_df], ignore_index=True)
+    day_count += 1
+    return daily_output_df, hourly_output_df
+
+
+# ------------------------------------------------------------------------------
 # testing
-# -------------------------------------------------------------------------------# trouble_df = new_df_single_day_hourly_tweetcount(trouble_day_folder)
+# ------------------------------------------------------------------------------
+
+# trouble_df = new_df_single_day_hourly_tweetcount(trouble_day_folder)
 
 
 # test_day_folder = os.path.join(csv_master_folder, "2021-03-01")
