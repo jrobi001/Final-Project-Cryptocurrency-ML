@@ -32,27 +32,27 @@ for hashtag in hashtags:
         output_csv_folder, "without-shared", f"{hashtag}_daily.csv")
     hourly_path = os.path.join(
         output_csv_folder, "without-shared", f"{hashtag}_hourly.csv")
-    hashtag_hourly, hashtag_daily = sentiment.df_hashtag_csv_process_daily_hourly(
+    hashtag_daily, hashtag_hourly = sentiment.df_hashtag_csv_process_daily_hourly(
         cleaned_csv_master_folder, hashtag)
 
     hashtag_hourly.to_csv(hourly_path, index=False, header=True, mode='w+')
     hashtag_daily.to_csv(daily_path, index=False, header=True, mode='w+')
 
-# # this is running with shared tweets merged to bitcoin and ethereum
-# for hashtag in hashtags:
-#     daily_path = os.path.join(
-#         output_csv_folder, "with-shared", f"{hashtag}_daily.csv")
-#     hourly_path = os.path.join(
-#         output_csv_folder, "with-shared", f"{hashtag}_hourly.csv")
-#     if hashtag == "dogecoin":
-#         hashtag_hourly, hashtag_daily = sentiment.df_hashtag_csv_process_daily_hourly(
-#         cleaned_csv_master_folder, hashtag)
-#     else:
-#         hashtag_hourly, hashtag_daily = sentiment.df_hashtag_csv_process_daily_hourly(
-#             cleaned_csv_master_folder, hashtag, merge_hashtag="shared")
+# this is running with shared tweets merged to bitcoin and ethereum
+for hashtag in hashtags:
+    daily_path = os.path.join(
+        output_csv_folder, "with-shared", f"{hashtag}_daily.csv")
+    hourly_path = os.path.join(
+        output_csv_folder, "with-shared", f"{hashtag}_hourly.csv")
+    if hashtag == "dogecoin":
+        hashtag_hourly, hashtag_daily = sentiment.df_hashtag_csv_process_daily_hourly(
+            cleaned_csv_master_folder, hashtag)
+    else:
+        hashtag_hourly, hashtag_daily = sentiment.df_hashtag_csv_process_daily_hourly(
+            cleaned_csv_master_folder, hashtag, merge_hashtag="shared")
 
-#     hashtag_hourly.to_csv(hourly_path, index=False, header=True, mode='w+')
-#     hashtag_daily.to_csv(daily_path, index=False, header=True, mode='w+')
+    hashtag_hourly.to_csv(hourly_path, index=False, header=True, mode='w+')
+    hashtag_daily.to_csv(daily_path, index=False, header=True, mode='w+')
 
 
 # # -------------------------------------------------------------------------------

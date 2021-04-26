@@ -313,15 +313,15 @@ def df_hashtag_csv_process_daily_hourly(all_days_folder_path, hashtag, merge_has
             f'{hashtag}_subjectivity_zeros': hourly_subjectivity_zeros}
         hourly_df = pd.DataFrame(hourly_sentiment_dict)
 
-    if day_count == 0:
-        daily_output_df = day_df
-        hourly_output_df = hourly_df
-    else:
-        daily_output_df = pd.concat(
-            [daily_output_df, day_df], ignore_index=True)
-        hourly_output_df = pd.concat(
-            [hourly_output_df, hourly_df], ignore_index=True)
-    day_count += 1
+        if day_count == 0:
+            daily_output_df = day_df
+            hourly_output_df = hourly_df
+        else:
+            daily_output_df = pd.concat(
+                [daily_output_df, day_df], ignore_index=True)
+            hourly_output_df = pd.concat(
+                [hourly_output_df, hourly_df], ignore_index=True)
+        day_count += 1
     return daily_output_df, hourly_output_df
 
 
