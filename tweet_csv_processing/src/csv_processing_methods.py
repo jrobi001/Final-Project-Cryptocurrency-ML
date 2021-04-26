@@ -8,9 +8,9 @@ import csv
 # - experimaent normalising the data? (perhpas better done in a notebook)
 
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Delete Bad Tweet Methods
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def print_indexes_of_bad_format_tweets(csv_path):
@@ -34,7 +34,7 @@ def print_indexes_of_bad_format_tweets(csv_path):
         print(f"total bad tweets = {count}")
     return
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def print_bad_tweets_all_csvs(master_folder_path):
@@ -50,7 +50,7 @@ def print_bad_tweets_all_csvs(master_folder_path):
             print("-"*80)
     return
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def delete_bad_tweets_csv(input_csv_path, output_csv_path):
@@ -77,7 +77,7 @@ def delete_bad_tweets_csv(input_csv_path, output_csv_path):
         print(f"total bad tweets = {count}")
     return
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def delete_bad_tweets_all_csvs_create_new(input_master_folder, output_master_folder, only_process_new=False):
@@ -106,9 +106,9 @@ def delete_bad_tweets_all_csvs_create_new(input_master_folder, output_master_fol
     return
 
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Processing Methods
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def get_hashtag_and_date_from_csv_title(csv_name):
@@ -132,7 +132,7 @@ def get_hashtag_and_date_from_csv_title(csv_name):
     return hashtag, date
 
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # TODO: I think a lot of the checks should be in this CSV import
 def dataframe_from_tweet_csv(csv_path, sort_time_column=None):
@@ -173,7 +173,7 @@ def dataframe_from_tweet_csv(csv_path, sort_time_column=None):
         df = df.sort_index()
     return df
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def df_check_no_duplicates(dataframe):
@@ -191,7 +191,7 @@ def df_check_no_duplicates(dataframe):
         raise Exception("This CSV has duplicate id's")
     return
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def df_check_all_same_date(dataframe, file_date):
@@ -213,13 +213,13 @@ def df_check_all_same_date(dataframe, file_date):
             f"Some tweets in the dataframe are not from {file_date}")
     return
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def df_group_by_hour(dataframe, time_column):
     return dataframe.groupby(pd.Grouper(key=time_column, freq='H'))
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
@@ -269,7 +269,7 @@ def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
         count += 1
     return output_df
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 def new_df_all_days_hourly_tweetcount(all_days_folder_path):
@@ -300,9 +300,10 @@ def new_df_all_days_hourly_tweetcount(all_days_folder_path):
     return output_df
 
 
-# -------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # testing
-# -------------------------------------------------------------------------------# trouble_df = new_df_single_day_hourly_tweetcount(trouble_day_folder)
+# ------------------------------------------------------------------------------
+# # trouble_df = new_df_single_day_hourly_tweetcount(trouble_day_folder)
 
 # trouble_day_folder = os.path.join(tweepy_csv_master_folder, '2021-02-16')
 

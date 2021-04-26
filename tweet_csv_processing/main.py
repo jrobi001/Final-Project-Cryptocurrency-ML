@@ -34,21 +34,37 @@ df.to_csv(tweet_volume_hourly_csv, index=False, header=True, mode='w+')
 # Tweet Sentiment - Daily Breakdown
 # -------------------------------------------------------------------------------
 
-tweet_sentiment_daily_no_zero = os.path.join(
-    output_csv_folder, "tweet-sentiment-daily-no-zero.csv")
+daily_sentiment_df, hourly_sentiment_df = sentiment.sentiment_hourly_and_daily_all(
+    cleaned_csv_master_folder)
 
-daily_sentiment_df = sentiment.new_df_all_days_sentiment(
-    cleaned_csv_master_folder, drop_zero_values=True)
+daily_sentiment_path = os.path.join(
+    output_csv_folder, "tweet-sentiment-daily.csv")
 
-daily_sentiment_df.to_csv(
-    tweet_sentiment_daily_no_zero, index=False, header=True, mode='w+')
-
-
-tweet_sentiment_daily_with_zeros = os.path.join(
-    output_csv_folder, "tweet-sentiment-daily-with-zeros.csv")
-
-daily_sentiment_df = sentiment.new_df_all_days_sentiment(
-    cleaned_csv_master_folder, drop_zero_values=False)
+hourly_sentiment_path = os.path.join(
+    output_csv_folder, "tweet-sentiment-hourly.csv")
 
 daily_sentiment_df.to_csv(
-    tweet_sentiment_daily_with_zeros, index=False, header=True, mode='w+')
+    daily_sentiment_path, index=False, header=True, mode='w+')
+
+hourly_sentiment_df.to_csv(
+    hourly_sentiment_path, index=False, header=True, mode='w+')
+
+
+# tweet_sentiment_daily_no_zero = os.path.join(
+#     output_csv_folder, "tweet-sentiment-daily-no-zero.csv")
+
+# daily_sentiment_df = sentiment.new_df_all_days_sentiment(
+#     cleaned_csv_master_folder, drop_zero_values=True)
+
+# daily_sentiment_df.to_csv(
+#     tweet_sentiment_daily_no_zero, index=False, header=True, mode='w+')
+
+
+# tweet_sentiment_daily_with_zeros = os.path.join(
+#     output_csv_folder, "tweet-sentiment-daily-with-zeros.csv")
+
+# daily_sentiment_df = sentiment.new_df_all_days_sentiment(
+#     cleaned_csv_master_folder, drop_zero_values=False)
+
+# daily_sentiment_df.to_csv(
+#     tweet_sentiment_daily_with_zeros, index=False, header=True, mode='w+')

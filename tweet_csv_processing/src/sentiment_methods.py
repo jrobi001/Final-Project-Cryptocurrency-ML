@@ -1,3 +1,4 @@
+from datetime import time
 from .csv_processing_methods import *
 import pandas as pd
 import os
@@ -29,6 +30,9 @@ def clean_text(text, remove_mentions=True, remove_hashtags=True, remove_links=Tr
     return cleaned
 
 
+# ------------------------------------------------------------------------------
+
+
 def sentiment_df_from_tweet_df(tweet_dataframe, clean_tweets=True):
     # only english tweets:
     tweet_dataframe = tweet_dataframe.loc[tweet_dataframe["user_lang"] == "en"]
@@ -50,6 +54,9 @@ def sentiment_df_from_tweet_df(tweet_dataframe, clean_tweets=True):
     return sentiment_only_df
 
 
+# ------------------------------------------------------------------------------
+
+
 def mean_polarity_subjectivity(sentiment_df, drop_zero_values=False):
     polarities = sentiment_df['polarity'].tolist()
     subjectivities = sentiment_df['subjectivity'].tolist()
@@ -62,6 +69,9 @@ def mean_polarity_subjectivity(sentiment_df, drop_zero_values=False):
     mean_subjectivity = sum(subjectivities)/len(subjectivities)
 
     return mean_polarity, mean_subjectivity
+
+
+# ------------------------------------------------------------------------------
 
 
 def new_df_all_days_sentiment(all_days_folder_path, drop_zero_values=False, clean_tweets=True):
@@ -104,6 +114,101 @@ def new_df_all_days_sentiment(all_days_folder_path, drop_zero_values=False, clea
         day_count += 1
     return output_df
 
+
+# ------------------------------------------------------------------------------
+def get_continue_date_existing_files(processed_csv):
+    
+    return
+
+# ------------------------------------------------------------------------------
+
+
+def sentiment_hourly_and_daily_all(all_days_folder_path):
+    # load in date to process from, can make a function to get this date from existing sentiment files
+    daily_output_df = pd.DataFrame()
+    hourly_output_df = pd.DataFrame()
+    daily_tweet_folders = os.listdir(all_days_folder_path)
+    daily_tweet_folders.sort(reverse=False)
+    day_count = 0
+    for folder in daily_tweet_folders:
+        day_folder_path = os.path.join(all_days_folder_path, folder)
+        file_names = os.listdir(day_folder_path)
+        file_names.sort()
+        # can add in skip if already processed before here
+        file_count = 0
+        day_df = pd.DataFrame()
+        hourly_df = pd.DataFrame()
+        for file in file_names:
+            print(f"processing {file}")
+            coin, file_date = get_hashtag_and_date_from_csv_title(file)
+            file_path = os.path.join(day_folder_path, file)
+            file_df = dataframe_from_tweet_csv(file_path, 'created_at')
+
+            file_df_hourly = df_group_by_hour(file_df, 'created_at')
+            times = []
+            hourly_polarity_zeros = []
+            hourly_polarity_no_zeros = []
+            hourly_subjectivity_zeros = []
+            hourly_subjectivity_no_zeros = []
+            file_df = []
+
+            for group, frame in file_df_hourly:
+                times.append(group)
+                frame = sentiment_df_from_tweet_df(frame)
+                hour_polarity_zeros, hour_subjectivity_zeros = mean_polarity_subjectivity(
+                    frame, drop_zero_values=False)
+                hour_polarity_no_zeros, hour_subjectivity_no_zeros = mean_polarity_subjectivity(
+                    frame, drop_zero_values=True)
+                hourly_polarity_zeros.append(hour_polarity_zeros)
+                hourly_polarity_no_zeros.append(hour_polarity_no_zeros)
+                hourly_subjectivity_zeros.append(hour_subjectivity_zeros)
+                hourly_subjectivity_no_zeros.append(hour_subjectivity_no_zeros)
+                file_df.append(frame)
+
+            # for group, frame in file_df_hourly:
+            #     file_df.append(file_df, frame)
+
+            file_df = pd.concat(file_df)
+            file_polarity_no_zeros, file_subjectivity_no_zeros = mean_polarity_subjectivity(
+                file_df, drop_zero_values=True)
+            file_polarity_zeros, file_subjectivity_zeros = mean_polarity_subjectivity(
+                file_df, drop_zero_values=True)
+
+            if file_count == 0:
+                day_sentiment_dict = {
+                    'date': [file_date], f'{coin}_polarity': file_polarity_no_zeros,
+                    f'{coin}_subjectivity': file_subjectivity_no_zeros,
+                    f'{coin}_polarity_zeros': file_polarity_zeros,
+                    f'{coin}_subjectivity_zeros': file_subjectivity_zeros}
+                day_df = pd.DataFrame(day_sentiment_dict)
+
+                hourly_sentiment_dict = {
+                    'time': times, f'{coin}_polarity': hourly_polarity_no_zeros,
+                    f'{coin}_subjectivity': hourly_subjectivity_no_zeros,
+                    f'{coin}_polarity_zeros': hourly_polarity_zeros,
+                    f'{coin}_subjectivity_zeros': hourly_subjectivity_zeros}
+                hourly_df = pd.DataFrame(hourly_sentiment_dict)
+            else:
+                day_df[f'{coin}_polarity'] = file_polarity_no_zeros
+                day_df[f'{coin}_subjectivity'] = file_subjectivity_no_zeros
+                day_df[f'{coin}_polarity_zeros'] = file_polarity_zeros
+                day_df[f'{coin}_subjectivity_zeros'] = file_subjectivity_zeros
+
+                hourly_df[f'{coin}_polarity'] = hourly_polarity_no_zeros
+                hourly_df[f'{coin}_subjectivity'] = hourly_subjectivity_no_zeros
+                hourly_df[f'{coin}_polarity_zeros'] = hourly_polarity_zeros
+                hourly_df[f'{coin}_subjectivity_zeros'] = hourly_subjectivity_zeros
+            file_count += 1
+        if day_count == 0:
+            daily_output_df = day_df
+            hourly_output_df = hourly_df
+        else:
+            daily_output_df = pd.concat(
+                [daily_output_df, day_df], ignore_index=True)
+            hourly_output_df = pd.concat(
+                [hourly_output_df, hourly_df], ignore_index=True)
+        day_count += 1
+    return daily_output_df, hourly_output_df
 
 # -------------------------------------------------------------------------------
 # testing
