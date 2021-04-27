@@ -61,7 +61,7 @@ for hashtag in hashtags:
     if hashtag == "dogecoin":
         continue
     else:
-        hashtag_hourly, hashtag_daily = sentiment.df_hashtag_csv_process_daily_hourly(
+        hashtag_daily, hashtag_hourly = sentiment.df_hashtag_csv_process_daily_hourly(
             cleaned_csv_master_folder, hashtag, merge_hashtag="shared", continue_date=continue_date)
 
     if continue_date:
