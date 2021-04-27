@@ -1,3 +1,4 @@
+# %%
 import os
 import src.csv_processing_methods as processing
 import src.sentiment_methods as sentiment
@@ -22,38 +23,56 @@ processing.delete_bad_tweets_all_csvs_create_new(
 
 hashtags = ["ethereum", "bitcoin", "dogecoin"]
 
-# TODO: change csv mode to 'a' and create check for if file exists (and w+ then)
-# then add in code for checking date after running today and see if can successfully
-# append sentiments to tomorrows
+# Fetching the date to continue from from the first file found in output directory
+continue_date = None
+output_filenames = os.listdir(output_csv_folder)
+output_filenames = [
+    output_filenames for output_filenames in output_filenames if output_filenames.endswith(".csv")]
+
+if len(output_filenames) != 0:
+    first_file = os.path.join(output_csv_folder, output_filenames[0])
+    # the first file name should be a daily breakdown rather than hourly (could filter out)
+    # this is the reson why use 'date' column (would be 'time' column if hourly first)
+    continue_date = processing.get_last_date_csv(first_file, 'date')
+
 
 # this is running without shared tweets merged to bitcoin and ethereum
 for hashtag in hashtags:
     daily_path = os.path.join(
-        output_csv_folder, "without-shared", f"{hashtag}_daily.csv")
+        output_csv_folder, f"{hashtag}_daily.csv")
     hourly_path = os.path.join(
-        output_csv_folder, "without-shared", f"{hashtag}_hourly.csv")
+        output_csv_folder, f"{hashtag}_hourly.csv")
     hashtag_daily, hashtag_hourly = sentiment.df_hashtag_csv_process_daily_hourly(
-        cleaned_csv_master_folder, hashtag)
+        cleaned_csv_master_folder, hashtag, continue_date=continue_date)
 
-    hashtag_hourly.to_csv(hourly_path, index=False, header=True, mode='w+')
-    hashtag_daily.to_csv(daily_path, index=False, header=True, mode='w+')
+    if continue_date:
+        hashtag_hourly.to_csv(hourly_path, index=False, header=False, mode='a')
+        hashtag_daily.to_csv(daily_path, index=False, header=False, mode='a')
+    else:
+        hashtag_hourly.to_csv(hourly_path, index=False, header=True, mode='w+')
+        hashtag_daily.to_csv(daily_path, index=False, header=True, mode='w+')
 
 # this is running with shared tweets merged to bitcoin and ethereum
 for hashtag in hashtags:
     daily_path = os.path.join(
-        output_csv_folder, "with-shared", f"{hashtag}_daily.csv")
+        output_csv_folder, "with-shared", f"{hashtag}_daily_w_shared.csv")
     hourly_path = os.path.join(
-        output_csv_folder, "with-shared", f"{hashtag}_hourly.csv")
+        output_csv_folder, "with-shared", f"{hashtag}_hourly_w_shared.csv")
     if hashtag == "dogecoin":
-        hashtag_hourly, hashtag_daily = sentiment.df_hashtag_csv_process_daily_hourly(
-            cleaned_csv_master_folder, hashtag)
+        continue
     else:
         hashtag_hourly, hashtag_daily = sentiment.df_hashtag_csv_process_daily_hourly(
-            cleaned_csv_master_folder, hashtag, merge_hashtag="shared")
+            cleaned_csv_master_folder, hashtag, merge_hashtag="shared", continue_date=continue_date)
 
-    hashtag_hourly.to_csv(hourly_path, index=False, header=True, mode='w+')
-    hashtag_daily.to_csv(daily_path, index=False, header=True, mode='w+')
+    if continue_date:
+        hashtag_hourly.to_csv(hourly_path, index=False, header=False, mode='a')
+        hashtag_daily.to_csv(daily_path, index=False, header=False, mode='a')
+    else:
+        hashtag_hourly.to_csv(hourly_path, index=False, header=True, mode='w+')
+        hashtag_daily.to_csv(daily_path, index=False, header=True, mode='w+')
 
+
+# previous code below this point (probably remove if all works)
 
 # # -------------------------------------------------------------------------------
 # # Tweet Volume - Hourly Breakdown

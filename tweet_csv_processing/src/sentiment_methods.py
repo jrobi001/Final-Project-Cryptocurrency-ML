@@ -118,10 +118,6 @@ def new_df_all_days_sentiment(all_days_folder_path, drop_zero_values=False, clea
 
 # ------------------------------------------------------------------------------
 
-# TODO: modify to take hashtag/filename input and only process those files
-# also add option to merge with another file e.g. the shared tweets
-# should return an hourly and daily df of sentiment for a hashtag (as collected by scraper)
-# can then combine that df with
 def sentiment_hourly_and_daily_all(all_days_folder_path):
     # load in date to process from, can make a function to get this date from existing sentiment files
     daily_output_df = pd.DataFrame()
@@ -219,12 +215,12 @@ def df_hashtag_csv_process_daily_hourly(all_days_folder_path, hashtag, merge_has
     daily_tweet_folders.sort(reverse=False)
     day_count = 0
     for folder in daily_tweet_folders:
-        day_df = pd.DataFrame()         # output df, daily breakdown
-        hourly_df = pd.DataFrame()      # output df, hourly breakdown
+        day_df = pd.DataFrame()         # df, daily breakdown
+        hourly_df = pd.DataFrame()      # df, hourly breakdown
         hashtag_df = pd.DataFrame()     # df to store original data from files
 
         # skipping if already processed before (continue date provided)
-        if continue_date:
+        if continue_date != None:
             folder_date = datetime.fromisoformat(folder).date()
             if folder_date <= continue_date:
                 continue

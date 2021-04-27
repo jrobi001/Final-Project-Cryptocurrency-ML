@@ -311,7 +311,6 @@ def new_df_all_days_hourly_tweetcount(all_days_folder_path):
 
 
 def get_last_date_csv(csv_file_path, time_column):
-    # TODO: might need to handle empty file, or non-existent files
     file_df = dataframe_from_tweet_csv(csv_file_path, time_column)
     # could be rewritten as a single step, but
     date = file_df[time_column].dt.date.max()

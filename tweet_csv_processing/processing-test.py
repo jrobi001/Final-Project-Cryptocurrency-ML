@@ -27,6 +27,12 @@ output_csv_folder = os.path.join(
 
 
 # %%
+files = os.listdir(output_csv_folder)
+# https://stackoverflow.com/questions/9234560/find-all-csv-files-in-a-directory-using-python/38584736
+CSV_files = [files for files in files if files.endswith("hourly.csv")]
+print(CSV_files)
+
+# %%
 df_dates = test_file_df['time'].dt.date
 print(df_dates)
 
