@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 from tqdm import tqdm
+import time
+from datetime import datetime, timedelta
 
 
 def extract_hastags_from_entities(entities_hashtag):
@@ -55,9 +57,30 @@ def get_tweets_and_create_csv(tweepy_api, tweet_id_list, chunk_size, folder_path
 
     include_header = True
     for chunk in chunked_tweet_ids:
-
-        chunk_statuses = tweepy_api.statuses_lookup(
-            chunk, tweet_mode="extended")
+        # https://stackoverflow.com/questions/53806479/dealing-with-twitter-rate-limit
+        try:
+            chunk_statuses = tweepy_api.statuses_lookup(
+                chunk, tweet_mode="extended")
+        except:
+            print("collection ran into an error, now waiting for 10 mins\n")
+            print("manually stopping collection now will require either re-collection completely (by clearning snscrape temp files and deleting current day's CSVs)\n")
+            print(
+                "or delete current day CSVs, comment out snscrape collection from main.py and run again\n")
+            print(
+                "or just wait 10 minutes (and check your internet connection is stable)\n")
+            current_time = datetime.now()
+            resume = current_time + timedelta(minutes=10, seconds=1)
+            current_time = time.strftime("%H:%M:%S")
+            resume = resume.strftime("%H:%M:%S")
+            print(f"paused at {current_time} resuming at {resume}")
+            wait_time = 10
+            for i in range(0, wait_time):
+                print(f"resuming collection in {wait_time - i} minutes")
+                time.sleep(60)
+            print("resuming collection")
+            time.sleep(1)
+            chunk_statuses = tweepy_api.statuses_lookup(
+                chunk, tweet_mode="extended")
 
         last_tweet = create_tweet_csv_entry_from_api_status(
             chunk_statuses.pop())

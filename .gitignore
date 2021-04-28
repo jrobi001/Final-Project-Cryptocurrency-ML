@@ -1,2 +1,6 @@
 docs/
 tweet-csv-cleaned/
+.vscode/
+price_collection/auth.txt
+price_collection/.vscode/
+price-data/backup
