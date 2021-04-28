@@ -21,6 +21,10 @@ output_csv_folder = os.path.join(
 processing.delete_bad_tweets_all_csvs_create_new(
     original_csv_master_folder, cleaned_csv_master_folder, only_process_new=True)
 
+# -------------------------------------------------------------------------------
+# Sentiment and volume analysis of tweets
+# -------------------------------------------------------------------------------
+
 hashtags = ["ethereum", "bitcoin", "dogecoin"]
 
 # Fetching the date to continue from from the first file found in output directory
