@@ -29,16 +29,18 @@ end_date = str(date.today() - timedelta(1))
 
 
 if not os.path.exists(start_date_file):
-    write_date = datetime.strptime(end_date, '%Y-%m-%d') + timedelta(1)
-    write_date = str(write_date.date())
-    f = open(start_date_file, "x")
-    f.write(write_date)
-    f.close()
     first_run = True
 else:
     with open(start_date_file) as f:
         for line in f:
             start_date = line
+
+
+write_date = datetime.strptime(end_date, '%Y-%m-%d') + timedelta(1)
+write_date = str(write_date.date())
+f = open(start_date_file, "w")
+f.write(write_date)
+f.close()
 
 if datetime.strptime(start_date, '%Y-%m-%d') > datetime.strptime(end_date, '%Y-%m-%d'):
     print("oh no")
