@@ -44,7 +44,7 @@ f.close()
 
 if datetime.strptime(start_date, '%Y-%m-%d') > datetime.strptime(end_date, '%Y-%m-%d'):
     print("oh no")
-    print("it seems you have already run this file today")
+    print(f"it seems you have already collected prices up to {end_date}")
     print("to override change the date in price_collection/start-date.txt")
 
 else:

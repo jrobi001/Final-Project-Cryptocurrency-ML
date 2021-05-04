@@ -27,6 +27,39 @@ output_csv_folder = os.path.join(
 
 
 # %%
+input_tweet_folders = os.listdir(original_csv_master_folder)
+input_tweet_folders.sort(reverse=True)
+for folder in input_tweet_folders:
+    input_day_folder_path = os.path.join(original_csv_master_folder, folder)
+    file_names = os.listdir(input_day_folder_path)
+    file_names.sort()
+
+    for file in file_names:
+        print(file)
+        coin, date = processing.get_hashtag_and_date_from_csv_title(file)
+        input_file_path = os.path.join(input_day_folder_path, file)
+        df = processing.dataframe_from_tweet_csv(input_file_path, 'created_at')
+        try:
+            processing.df_check_all_same_date(df, date)
+        except:
+            print("not all same date")
+
+
+# %%
+daily_tweet_folders = os.listdir(cleaned_csv_master_folder)
+daily_tweet_folders.sort(reverse=False)
+print(daily_tweet_folders)
+for folder in daily_tweet_folders:
+    # print(folder)
+    day_folder_path = os.path.join(cleaned_csv_master_folder, folder)
+    file_names = os.listdir(day_folder_path)
+    file_names.sort()
+    file_names = np.asarray(file_names)
+    hashtag_files = file_names[np.flatnonzero(
+        np.char.find(file_names, "bitcoin") != -1)]
+    print(hashtag_files)
+
+# %%
 files = os.listdir(output_csv_folder)
 # https://stackoverflow.com/questions/9234560/find-all-csv-files-in-a-directory-using-python/38584736
 CSV_files = [files for files in files if files.endswith("hourly.csv")]
