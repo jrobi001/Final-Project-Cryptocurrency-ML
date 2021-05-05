@@ -45,7 +45,7 @@ def chunkify_tweet_ids(tweet_id_list, chunk_size):
 
 
 def get_tweets_and_create_csv(tweepy_api, tweet_id_list, chunk_size, folder_path, date, name):
-    csv_path = os.path.join(folder_path, "csv-tweet-files", str(date), "")
+    csv_path = os.path.join(folder_path, str(date), "")
     if not os.path.exists(csv_path):
         os.makedirs(csv_path)
     filename = csv_path + name + ".csv"

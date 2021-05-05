@@ -9,7 +9,7 @@ final-project-cryptocurrency
 |   |   |- processed-tweet-data
 |   |   |- tweet-sentiment-files
 |   |   |- price-data
-    |- src
+|   |- src
 |   |   |- price_collection
 |   |   |- twitter_scraper
 |   |   |- tweet_csv_processing
