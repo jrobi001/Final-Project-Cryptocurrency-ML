@@ -1,17 +1,19 @@
 final-project-cryptocurrency
 |- ml_notebooks
 |- datasets
-|- collection-data
-|   |- raw-tweet-data
-|   |- processed-tweet-data
-|   |- tweet-sentiment-files
-|   |- price-data
-|- auth
-|- settings.yml
-|- src
-|   |- price_collection
-|   |- twitter_scraper
-|   |- tweet_csv_processing
-|   |- combine_data
+|- data_collection
+|   |- auth
+|   |- data
+|   |   |- raw-tweet-data
+|   |   |- snscrape-archive
+|   |   |- processed-tweet-data
+|   |   |- tweet-sentiment-files
+|   |   |- price-data
+    |- src
+|   |   |- price_collection
+|   |   |- twitter_scraper
+|   |   |- tweet_csv_processing
+|   |   |- combine_data
 |   |- main.py
-|- collect_data.py
+|   |- settings.yml
+|   |- cryptocurrencies.yml
