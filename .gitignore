@@ -11,3 +11,4 @@ data_collection/data/tweet-csv-raw
 data_collection/data/tweet-csv-cleaned
 data_collection/data/snscrape-temp
 data_collection/data/snscrape-archive
+data_collection/src/tweet_csv_processing/__pycache__/

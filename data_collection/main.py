@@ -1,7 +1,8 @@
 import os
 import tweepy
 import yaml
-from datetime import date, timedelta
+import san
+from datetime import datetime, date, timedelta
 import src.twitter_scraper.snscrape_methods as snscrape_methods
 import src.twitter_scraper.tweepy_methods as tweepy_methods
 import src.tweet_csv_processing.csv_processing_methods as csv_processing
@@ -18,16 +19,23 @@ folder_snscrape_archive = os.path.join(folder_data, "snscrape-archive")
 folder_raw_tweets = os.path.join(folder_data, "tweet-csv-raw")
 folder_cleaned_tweets = os.path.join(folder_data, "tweet-csv-cleaned")
 folder_processed_tweets = os.path.join(folder_data, "processed-tweet-data")
-folder_price_data = os.path.join(folder_data, "price_data")
+folder_price_data = os.path.join(folder_data, "price-data")
 
 folder_auth = os.path.join(this_folder, "auth")
 file_twitter_auth = os.path.join(folder_auth, "twitter-auth.txt")
+file_santiment_auth = os.path.join(folder_auth, "santiment-auth.txt")
 
 # Loading settings
 yml_cryptocurrencies = os.path.join(this_folder, "cryptocurrencies.yml")
 cryptocurrencies = []
 with open(yml_cryptocurrencies) as file:
     cryptocurrencies = yaml.full_load(file)
+
+# TODO: I think moving all the logic to main functions in src makes sense
+# only perform setup and calls to the main functions here
+
+# TODO: move data integrity/testing functions to their own folder
+# create set of functions to check days data and all data
 
 # ------------------------------------------------------------------------------
 # Collecting Twitter Data
@@ -53,7 +61,7 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 # TODO: save a last run date and adjust the start date accordingly (rather than always the day before)
 # also if multiple dates will need to loop (may be best to create function to collect single date tweets)
-end_date = date.today()
+end_date = date.today()                         #TODO: move these as setup parameters in settings
 start_date = end_date - timedelta(1)
 print("Today's date:", end_date)
 print("Collecting tweets from:", start_date)
@@ -124,7 +132,7 @@ processed_filenames = os.listdir(folder_processed_tweets)
 processed_filenames = [
     processed_filenames for processed_filenames in processed_filenames if processed_filenames.endswith(".csv")]
 
-if len(processed_filenames != 0):
+if len(processed_filenames) != 0:
     first_file = os.path.join(folder_processed_tweets, processed_filenames[0])
     # the first file name should be a daily breakdown rather than hourly (could filter out)
     # this is the reson why use 'date' column (would be 'time' column if hourly first)
@@ -185,3 +193,89 @@ for coin in cryptocurrencies:
 # ------------------------------------------------------------------------------
 # Collecting Price Data
 # ------------------------------------------------------------------------------
+
+# TODO: make most of this methods and move to appropriate folder
+
+price_start_date_file = os.path.join(this_folder, 'start-date.txt')
+
+first_run = False
+
+# Setting up santiment api key (is single string stored in auth.txt)
+auth_string = ''    # can remove below and provide key here directly
+with open(file_santiment_auth) as f:
+    for line in f:
+        auth_string = line
+
+
+end_date = date.today()         # TODO: remove
+# santiment dates are inclusive (unlike snscrape)
+# collecting prices only up to midnight last night (as is same period tweets currently collected to)
+price_end_date = str(end_date - timedelta(1))
+# TODO: replace this with a setting, like collection period start or something
+# or detect it from the first date in the twitter data
+price_start_date = "2021-01-31"
+
+
+if not os.path.exists(price_start_date_file):
+    first_run = True
+else:
+    with open(price_start_date_file) as f:
+        for line in f:
+            price_start_date = line
+
+
+if datetime.strptime(price_start_date, '%Y-%m-%d') > datetime.strptime(price_end_date, '%Y-%m-%d'):
+    print("oh no")
+    print(f"it seems you have already collected prices up to {price_end_date}")
+    print("to override change the date in price_collection/start-date.txt")
+
+else:
+    print(f"collecting prices between {price_start_date} and {price_end_date}")
+
+    # fetching hourly data from santiment API
+    for coin in cryptocurrencies:
+        query = "ohlcv/" + coin["name"]
+        print("fetching hourly price data for {0}".format(coin["name"]))
+        ohlcv_hourly_df = san.get(
+            query,
+            from_date=price_start_date,
+            to_date=price_end_date,
+            interval="1h"
+        )
+
+        if first_run:
+            csv_path = os.path.join(
+                folder_price_data, "hourly-prices-{0}.csv".format(coin["name"]))
+            ohlcv_hourly_df.to_csv(csv_path, index=True,
+                                   header=True, mode='w+')
+        else:
+            csv_path = os.path.join(
+                folder_price_data, "hourly-prices-{0}.csv".format(coin["name"]))
+            ohlcv_hourly_df.to_csv(csv_path, index=True,
+                                   header=False, mode='a')
+
+    # fetching daily data from santiment api
+    for coin in cryptocurrencies:
+        query = "ohlcv/" + coin["name"]
+        print("fetching daily price data for {0}".format(coin["name"]))
+        ohlcv_daily_df = san.get(
+            query,
+            from_date=price_start_date,
+            to_date=price_end_date,
+            interval="1d"
+        )
+        if first_run:
+            csv_path = os.path.join(
+                folder_price_data, "daily-prices-{0}.csv".format(coin["name"]))
+            ohlcv_daily_df.to_csv(csv_path, index=True, header=True, mode='w+')
+        else:
+            csv_path = os.path.join(
+                folder_price_data, "daily-prices-{0}.csv".format(coin["name"]))
+            ohlcv_daily_df.to_csv(csv_path, index=True, header=False, mode='a')
+
+
+# the day after the end date of price collection (same as snscrape end date)
+write_date = str(end_date)
+f = open(price_start_date_file, "w")
+f.write(write_date)
+f.close()

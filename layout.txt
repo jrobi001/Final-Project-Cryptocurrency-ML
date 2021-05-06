@@ -3,6 +3,7 @@ final-project-cryptocurrency
 |- datasets
 |- data_collection
 |   |- auth
+|	|	|- api_auth.yml
 |   |- data
 |   |   |- raw-tweet-data
 |   |   |- snscrape-archive
@@ -14,6 +15,7 @@ final-project-cryptocurrency
 |   |   |- twitter_scraper
 |   |   |- tweet_csv_processing
 |   |   |- combine_data
+|	|	|- main_methods.py
 |   |- main.py
 |   |- settings.yml
 |   |- cryptocurrencies.yml
