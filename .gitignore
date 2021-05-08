@@ -4,3 +4,11 @@ tweet-csv-cleaned/
 price_collection/auth.txt
 price_collection/.vscode/
 price-data/backup
+data_collection/.vscode/
+data_collection/auth
+data_collection/data/price-data
+data_collection/data/tweet-csv-raw
+data_collection/data/tweet-csv-cleaned
+data_collection/data/snscrape-temp
+data_collection/data/snscrape-archive
+data_collection/src/tweet_csv_processing/__pycache__/
