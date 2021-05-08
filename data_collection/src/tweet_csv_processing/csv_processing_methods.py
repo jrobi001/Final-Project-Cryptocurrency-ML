@@ -269,7 +269,7 @@ def new_df_single_day_hourly_tweetcount(day_CSV_folder_path):
             counts.append(len(frame))
 
         if count == 0:
-            hourly_count_dict = {'Time': times, f'{coin}': counts}
+            hourly_count_dict = {'datetime': times, f'{coin}': counts}
             output_df = pd.DataFrame(hourly_count_dict)
         else:
             output_df[f'{coin}'] = counts

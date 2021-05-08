@@ -102,7 +102,7 @@ def new_df_all_days_sentiment(all_days_folder_path, drop_zero_values=False, clea
 
             if file_count == 0:
                 day_sentiment_dict = {
-                    'date': [file_date], f'{coin}_polarity': file_polarity, f'{coin}_subjectivity': file_subjectivity}
+                    'datetime': [file_date], f'{coin}_polarity': file_polarity, f'{coin}_subjectivity': file_subjectivity}
                 day_df = pd.DataFrame(day_sentiment_dict)
             else:
                 day_df[f'{coin}_polarity'] = file_polarity
@@ -171,14 +171,14 @@ def sentiment_hourly_and_daily_all(all_days_folder_path):
 
             if file_count == 0:
                 day_sentiment_dict = {
-                    'date': [file_date], f'{coin}_polarity': file_polarity_no_zeros,
+                    'datetime': [file_date], f'{coin}_polarity': file_polarity_no_zeros,
                     f'{coin}_subjectivity': file_subjectivity_no_zeros,
                     f'{coin}_polarity_zeros': file_polarity_zeros,
                     f'{coin}_subjectivity_zeros': file_subjectivity_zeros}
                 day_df = pd.DataFrame(day_sentiment_dict)
 
                 hourly_sentiment_dict = {
-                    'time': times, f'{coin}_polarity': hourly_polarity_no_zeros,
+                    'datetime': times, f'{coin}_polarity': hourly_polarity_no_zeros,
                     f'{coin}_subjectivity': hourly_subjectivity_no_zeros,
                     f'{coin}_polarity_zeros': hourly_polarity_zeros,
                     f'{coin}_subjectivity_zeros': hourly_subjectivity_zeros}
@@ -292,7 +292,7 @@ def df_hashtag_csv_process_daily_hourly(all_days_folder_path, hashtag, merge_has
         sum_counts = sum(counts)
 
         day_sentiment_dict = {
-            'date': [date],
+            'datetime': [date],
             f'{hashtag}_count': sum_counts,
             f'{hashtag}_polarity': file_polarity_no_zeros,
             f'{hashtag}_subjectivity': file_subjectivity_no_zeros,
@@ -301,7 +301,7 @@ def df_hashtag_csv_process_daily_hourly(all_days_folder_path, hashtag, merge_has
         day_df = pd.DataFrame(day_sentiment_dict)
 
         hourly_sentiment_dict = {
-            'time': times,
+            'datetime': times,
             f'{hashtag}_count': counts,
             f'{hashtag}_polarity': hourly_polarity_no_zeros,
             f'{hashtag}_subjectivity': hourly_subjectivity_no_zeros,

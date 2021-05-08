@@ -61,7 +61,7 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 # TODO: save a last run date and adjust the start date accordingly (rather than always the day before)
 # also if multiple dates will need to loop (may be best to create function to collect single date tweets)
-end_date = date.today()                         #TODO: move these as setup parameters in settings
+end_date = date.today()  # TODO: move these as setup parameters in settings
 start_date = end_date - timedelta(1)
 print("Today's date:", end_date)
 print("Collecting tweets from:", start_date)
@@ -134,9 +134,8 @@ processed_filenames = [
 
 if len(processed_filenames) != 0:
     first_file = os.path.join(folder_processed_tweets, processed_filenames[0])
-    # the first file name should be a daily breakdown rather than hourly (could filter out)
-    # this is the reson why use 'date' column (would be 'time' column if hourly first)
-    continue_date = csv_processing.get_last_date_csv(first_file, 'date')
+
+    continue_date = csv_processing.get_last_date_csv(first_file, 'datetime')
 
 # TODO: might be good to save the sentiment files from each coin/date, incase need to re-run
 # also currently many of the tweets are processed twice, when finding the combined sentiment
@@ -149,11 +148,41 @@ if len(processed_filenames) != 0:
 # - Perhaps wait and see, it may be better to see if the results from merging with shared
 #   and not perform differently in the models
 
+# default behaviour to merge back in shared files
 for coin in cryptocurrencies:
     daily_path = os.path.join(
-        folder_processed_tweets, "{0}_daily.csv".format(coin["name"]))
+        folder_processed_tweets, "{0}_twitter_daily.csv".format(coin["name"]))
     hourly_path = os.path.join(
-        folder_processed_tweets, "{0}_hourly.csv".format(coin["name"]))
+        folder_processed_tweets, "{0}_twitter_hourly.csv".format(coin["name"]))
+
+    coin_daily = None
+    coin_hourly = None
+    if coin["filter_shared"] == True:
+        coin_daily, coin_hourly = csv_sentiment.df_hashtag_csv_process_daily_hourly(
+            folder_cleaned_tweets, coin["name"], merge_hashtag="shared", continue_date=continue_date)
+    else:
+        coin_daily, coin_hourly = csv_sentiment.df_hashtag_csv_process_daily_hourly(
+            folder_cleaned_tweets, coin["name"], continue_date=continue_date)
+
+    if continue_date:
+        coin_hourly.to_csv(hourly_path, index=False,
+                           header=False, mode='a')
+        coin_daily.to_csv(daily_path, index=False,
+                          header=False, mode='a')
+    else:
+        coin_hourly.to_csv(hourly_path, index=False,
+                           header=True, mode='w+')
+        coin_daily.to_csv(daily_path, index=False,
+                          header=True, mode='w+')
+
+# creating data without shared tweets (to see if performs better)
+for coin in cryptocurrencies:
+    if coin["filter_shared"] == False:
+        continue
+    daily_path = os.path.join(
+        folder_processed_tweets, "no-shared", "{0}_twitter_no_shared_daily.csv".format(coin["name"]))
+    hourly_path = os.path.join(
+        folder_processed_tweets, "no-shared", "{0}_twitter_no_shared_hourly.csv".format(coin["name"]))
 
     coin_daily, coin_hourly = csv_sentiment.df_hashtag_csv_process_daily_hourly(
         folder_cleaned_tweets, coin["name"], continue_date=continue_date)
@@ -164,30 +193,6 @@ for coin in cryptocurrencies:
     else:
         coin_hourly.to_csv(hourly_path, index=False, header=True, mode='w+')
         coin_daily.to_csv(daily_path, index=False, header=True, mode='w+')
-
-# this is running with shared tweets merged to relevant coins
-for coin in cryptocurrencies:
-    if coin["filter_shared"] == False:
-        continue
-    else:
-        daily_path = os.path.join(
-            folder_processed_tweets, "with-shared", "{0}_daily_w_shared.csv".format(coin["name"]))
-        hourly_path = os.path.join(
-            folder_processed_tweets, "with-shared", "{0}_hourly_w_shared.csv".format(coin["name"]))
-
-        hashtag_daily, hashtag_hourly = csv_sentiment.df_hashtag_csv_process_daily_hourly(
-            folder_cleaned_tweets, coin["name"], merge_hashtag="shared", continue_date=continue_date)
-
-        if continue_date:
-            hashtag_hourly.to_csv(hourly_path, index=False,
-                                  header=False, mode='a')
-            hashtag_daily.to_csv(daily_path, index=False,
-                                 header=False, mode='a')
-        else:
-            hashtag_hourly.to_csv(hourly_path, index=False,
-                                  header=True, mode='w+')
-            hashtag_daily.to_csv(daily_path, index=False,
-                                 header=True, mode='w+')
 
 
 # ------------------------------------------------------------------------------
@@ -245,12 +250,12 @@ else:
 
         if first_run:
             csv_path = os.path.join(
-                folder_price_data, "hourly-prices-{0}.csv".format(coin["name"]))
+                folder_price_data, "{0}_prices_hourly.csv".format(coin["name"]))
             ohlcv_hourly_df.to_csv(csv_path, index=True,
                                    header=True, mode='w+')
         else:
             csv_path = os.path.join(
-                folder_price_data, "hourly-prices-{0}.csv".format(coin["name"]))
+                folder_price_data, "{0}_prices_hourly.csv".format(coin["name"]))
             ohlcv_hourly_df.to_csv(csv_path, index=True,
                                    header=False, mode='a')
 
@@ -266,11 +271,11 @@ else:
         )
         if first_run:
             csv_path = os.path.join(
-                folder_price_data, "daily-prices-{0}.csv".format(coin["name"]))
+                folder_price_data, "{0}_prices_daily.csv".format(coin["name"]))
             ohlcv_daily_df.to_csv(csv_path, index=True, header=True, mode='w+')
         else:
             csv_path = os.path.join(
-                folder_price_data, "daily-prices-{0}.csv".format(coin["name"]))
+                folder_price_data, "{0}_prices_daily.csv".format(coin["name"]))
             ohlcv_daily_df.to_csv(csv_path, index=True, header=False, mode='a')
 
 

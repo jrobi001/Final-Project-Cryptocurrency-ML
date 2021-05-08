@@ -1,4 +1,4 @@
-date,dogecoin_polarity,dogecoin_subjectivity,dogecoin_polarity_zeros,dogecoin_subjectivity_zeros,bitcoin_polarity,bitcoin_subjectivity,bitcoin_polarity_zeros,bitcoin_subjectivity_zeros,ethereum_polarity,ethereum_subjectivity,ethereum_polarity_zeros,ethereum_subjectivity_zeros,shared_polarity,shared_subjectivity,shared_polarity_zeros,shared_subjectivity_zeros
+datetime,dogecoin_polarity,dogecoin_subjectivity,dogecoin_polarity_zeros,dogecoin_subjectivity_zeros,bitcoin_polarity,bitcoin_subjectivity,bitcoin_polarity_zeros,bitcoin_subjectivity_zeros,ethereum_polarity,ethereum_subjectivity,ethereum_polarity_zeros,ethereum_subjectivity_zeros,shared_polarity,shared_subjectivity,shared_polarity_zeros,shared_subjectivity_zeros
 2021-01-25,0.20363777700545427,0.5436211988069363,0.20363777700545427,0.5436211988069363,,,,,,,,,,,,
 2021-01-26,0.24412398828524384,0.5434650574831654,0.24412398828524384,0.5434650574831654,,,,,,,,,,,,
 2021-01-27,0.16291745322463685,0.5429384560684158,0.16291745322463685,0.5429384560684158,,,,,,,,,,,,
