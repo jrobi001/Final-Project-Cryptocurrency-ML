@@ -33,7 +33,6 @@ def create_tweet_csv_entry_from_api_status(status):
         "user_location": str(status.user.location),
         # "status_url": null,
         # "entities_str": null,
-        # NOTE:Additional column to TAGS
         "hashtags": hashtags
     }
     return tweet

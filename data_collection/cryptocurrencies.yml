@@ -4,19 +4,15 @@
 - name: "bitcoin"
   hashtags: ["bitcoin", "btc"]  
   filter_shared: true
-  # tweet_list: null
 
 - name: "ethereum"
   hashtags: ["ethereum", "eth"]
   filter_shared: true
-  # tweet_list: null
 
 - name: "dogecoin"
   hashtags: ["dogecoin", "doge"]
   filter_shared: false
-  # tweet_list: null
 
 # - name: ""              # enter coin name here (string)
 #   hashtags: [""]        # enter list of hashtags here (if just one, still use list)
 #   filter_shared: false  # whether to filter out tweets shared with other coins (to save API calls)
-#   tweet_list: null      # leave as null (snscrape tweet list stored here)

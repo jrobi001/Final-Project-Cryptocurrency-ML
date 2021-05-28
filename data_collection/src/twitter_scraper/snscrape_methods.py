@@ -7,8 +7,8 @@ import shutil
 
 
 def snscrape_tweets_hashtags(hashtags, since, until, folder):
-    # Might want to collect them in the same folder, to seperate out duplicates between the two collections?
-    """Issues terminal commands to collect tweets using snscrape between the dates provided, into txt files in the directory provided.
+    """Issues terminal commands to collect tweets using snscrape between the 
+    dates provided, into txt files in the directory provided.
     Sub-folders are created for each hashtag in the directory provided.
 
     Args:
@@ -30,8 +30,6 @@ def snscrape_tweets_hashtags(hashtags, since, until, folder):
 # Separate out the id's
 # Already set up to take multiple files and remove duplicates, modify to only require folder
 def snscrape_separate_ids(hashtag, folder):
-    # Might want to filter out duplicates shared between hashtags in future
-    # or have them as a seperate list?
     path = os.path.join(folder, hashtag, "")
     id_keys = []
     count = 0
@@ -52,7 +50,7 @@ def snscrape_separate_ids(hashtag, folder):
     # ensuring no duplicate keys
     id_keys = list(dict.fromkeys(id_keys))
     final_count = len(id_keys)
-    print(f"{final_count} unique #{hashtag} tweet ids seperated with {count - final_count} duplicates removed")
+    print(f"\n{final_count} unique #{hashtag} tweet ids seperated with {count - final_count} duplicates removed\n")
     return id_keys
 
 

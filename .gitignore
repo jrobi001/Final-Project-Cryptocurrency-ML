@@ -5,7 +5,6 @@ price_collection/auth.txt
 price_collection/.vscode/
 price-data/backup
 data_collection/.vscode/
-data_collection/auth
 data_collection/data/price-data
 data_collection/data/tweet-csv-raw
 data_collection/data/tweet-csv-cleaned

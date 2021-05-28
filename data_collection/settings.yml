@@ -1,0 +1,8 @@
+collect_prices: true
+collect_tweets: true
+create_datasets: true
+process_tweets: true
+first_tweet_collection: '2021-01-31'
+last_price_collection: '2021-05-25'
+last_tweet_collection: '2021-05-25'
+
