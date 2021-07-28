@@ -30,7 +30,19 @@ def snscrape_tweets_hashtags(hashtags, since, until, folder):
 # Separate out the id's
 # Already set up to take multiple files and remove duplicates, modify to only require folder
 def snscrape_separate_ids(hashtag, folder):
-    path = os.path.join(folder, hashtag, "")
+    """Separates out the tweet id's from snscrape files. If multiple snscrape
+    files, merges them into a single tweet id list. i.e. multiple related
+    hashtag snscrape files stored in the same folder e.g. #Bitcoin and #BTC
+
+    Args:
+        hashtag (string): Name of primary hashtag merging on (only used for console message)
+        folder (string): Folder path of snscrape files to merge (should not include trailing '/' at end)
+
+    Returns:
+        list: List of unique tweet ids (from all snscrape files in folder provided)
+    """
+    # adding trailing '/' to folder path
+    path = os.path.join(folder, "")
     id_keys = []
     count = 0
     if not os.path.exists(path):
@@ -46,7 +58,6 @@ def snscrape_separate_ids(hashtag, folder):
                 tweet_id = str(line).split("/")[-1].split("'")[0]
                 id_keys.append(tweet_id)
                 count += 1
-        # TODO: move files to storage folder after processed?
     # ensuring no duplicate keys
     id_keys = list(dict.fromkeys(id_keys))
     final_count = len(id_keys)
@@ -55,6 +66,15 @@ def snscrape_separate_ids(hashtag, folder):
 
 
 def move_snscrape_files(snscrape_temp_dir, hashtags, destination_dir):
+    """Moves snscrape files from the temporary directory, to an archive folder.
+    Snscrape files in the temp directory used for tweet collection, move them to
+    allow new snscrape files to take their place.
+
+    Args:
+        snscrape_temp_dir (string): folder path of temporary snscrape files
+        hashtags (list of str): list of hashtags (used to collect tweets and name temp snscrape folder paths)
+        destination_dir (string): folder path of archived snscrape files
+    """
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
     for hashtag in hashtags:

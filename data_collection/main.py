@@ -12,7 +12,7 @@ import src.combine_data.combine_methods as combine_data
 
 
 this_folder = os.path.dirname(os.path.abspath(__file__))
-today = date.today() - timedelta(2)
+today = date.today()
 
 folders = []
 
@@ -59,6 +59,18 @@ create_datasets = settings["create_datasets"]
 
 first_tweet_collection = settings["first_tweet_collection"]
 
+# Loading twitter and santiment API auth strings
+yml_auth = os.path.join(folder_auth, "auth.yml")
+auth_strings = None
+with open(yml_auth) as file:
+    auth_strings = yaml.full_load(file)
+
+twitter_access_token = auth_strings["twitter_access_token"]
+twitter_access_token_secret = auth_strings["twitter_access_token_secret"]
+twitter_consumer_key = auth_strings["twitter_consumer_key"]
+twitter_consumer_secret = auth_strings["twitter_consumer_secret"]
+
+santiment_key = auth_strings["santiment_api_key"]
 
 print(f"Today's date is {today}\n")
 
@@ -66,21 +78,9 @@ print(f"Today's date is {today}\n")
 # Collecting Twitter Data
 # ------------------------------------------------------------------------------
 
-# TODO: place auth strings in another .yml? (will have to be hidden)
-# but can put a placeholder there if create a clean release version
 
-auth_strings_twitter = []
-with open(file_twitter_auth) as f:
-    for line in f:
-        auth_strings_twitter = line.split(",")
-
-access_token = auth_strings_twitter[0]
-access_token_secret = auth_strings_twitter[1]
-consumer_key = auth_strings_twitter[2]
-consumer_secret = auth_strings_twitter[3]
-
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
+auth = tweepy.OAuthHandler(twitter_consumer_key, twitter_consumer_secret)
+auth.set_access_token(twitter_access_token, twitter_access_token_secret)
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
@@ -117,15 +117,18 @@ if collect_tweets:
 
         for coin in cryptocurrencies:
             hashtags = coin["hashtags"]
-            # generating snsscrape files
+            # generating snscrape files
             snscrape_methods.snscrape_tweets_hashtags(
                 hashtags, start_date, end_date, folder_snscrape_temp)
+
             # moving/merging related hashtags snscrape files to same folder
+            # moves into folder titled with first hashtag in 'hashtags' (if multiple) i.e. hashtags[0]
             snscrape_methods.move_snscrape_files(
                 folder_snscrape_temp, hashtags[1:], os.path.join(folder_snscrape_temp, hashtags[0]))
 
+            # separating out tweet ids from snscrape files and merging related id lists
             coin_tweet_list = snscrape_methods.snscrape_separate_ids(
-                hashtags[0], folder_snscrape_temp)
+                coin["name"], os.path.join(folder_snscrape_temp, hashtags[0]))
 
             coin["tweet_list"] = coin_tweet_list
 
@@ -170,8 +173,8 @@ if collect_tweets:
             first_tweet_collection = str(today)
             settings["first_tweet_collection"] = first_tweet_collection
 
-        with open('settings.yml', 'w') as f:
-            data = yaml.dump(settings, f)
+    with open('settings.yml', 'w') as f:
+        data = yaml.dump(settings, f)
 
 
 # ------------------------------------------------------------------------------
@@ -266,13 +269,13 @@ if process_tweets:
 # Collecting Price Data
 # ------------------------------------------------------------------------------
 
-# TODO: make most of this methods and move to appropriate folder
+# # TODO: make most of this methods and move to appropriate folder
 
-# Setting up santiment api key (though not sure it's used)
-auth_string = ''    # can remove below and provide key here directly
-with open(file_santiment_auth) as f:
-    for line in f:
-        auth_string = line
+# # Setting up santiment api key (though not sure it's used)
+# auth_string = ''    # can remove below and provide key here directly
+# with open(file_santiment_auth) as f:
+#     for line in f:
+#         auth_string = line
 
 if collect_prices:
     print("-"*80)
@@ -366,19 +369,17 @@ if create_datasets:
     hourly_tweet_files = [
         tweet_files for tweet_files in tweet_files if tweet_files.endswith("hourly.csv")]
 
-    cryptocurrencies = ["ethereum", "dogecoin", "bitcoin"]
-
     for coin in cryptocurrencies:
         price_file = [
-            hourly_price_files for hourly_price_files in hourly_price_files if hourly_price_files.startswith(coin)][0]
+            hourly_price_files for hourly_price_files in hourly_price_files if hourly_price_files.startswith(coin["name"])][0]
         tweet_file = [
-            hourly_tweet_files for hourly_tweet_files in hourly_tweet_files if hourly_tweet_files.startswith(coin)][0]
+            hourly_tweet_files for hourly_tweet_files in hourly_tweet_files if hourly_tweet_files.startswith(coin["name"])][0]
 
         price_path = os.path.join(folder_price_data, price_file)
         tweet_path = os.path.join(folder_processed_tweets, tweet_file)
 
         output_csv = os.path.join(
-            folder_datasets, "{0}_hourly.csv".format(coin))
+            folder_datasets, "{0}_hourly.csv".format(coin["name"]))
 
         combine_data.merge_processed_hourly_data(
             price_path, tweet_path, output_csv)

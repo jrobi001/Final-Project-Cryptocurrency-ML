@@ -14,8 +14,8 @@ with open(auth_file) as f:
         auth_string = line
 
 
-start = "2021-02-01"
-end = "2021-02-02"
+start = "2021-06-10"
+end = "2021-06-11"
 
 query = "ohlc/bitcoin"
 ohlcv_hourly_df = san.get(

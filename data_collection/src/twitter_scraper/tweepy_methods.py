@@ -5,13 +5,6 @@ import time
 from datetime import datetime, timedelta
 
 
-def extract_hastags_from_entities(entities_hashtag):
-    hashtags_string = ""
-    for i in range(len(entities_hashtag)):
-        hashtags_string = hashtags_string + "#" + entities_hashtag[i]['text']
-    return hashtags_string
-
-
 def create_tweet_csv_entry_from_api_status(status):
     hashtags = extract_hastags_from_entities(status.entities['hashtags'])
     tweet = {
@@ -36,6 +29,22 @@ def create_tweet_csv_entry_from_api_status(status):
         "hashtags": hashtags
     }
     return tweet
+
+
+def extract_hastags_from_entities(entities_hashtag):
+    """Extracts hashtags used in a tweet (status) from the status.entities['hashtags'].
+    Hashtags returned as a string separated by '#' symbols
+
+    Args:
+        entities_hashtag (JSON like): status.entities['hashtags']
+
+    Returns:
+        string: string of all hashtags in status, separated by '#'
+    """
+    hashtags_string = ""
+    for i in range(len(entities_hashtag)):
+        hashtags_string = hashtags_string + "#" + entities_hashtag[i]['text']
+    return hashtags_string
 
 
 def chunkify_tweet_ids(tweet_id_list, chunk_size):
