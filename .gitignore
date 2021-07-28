@@ -6,6 +6,7 @@ price_collection/.vscode/
 price-data/backup
 data_collection/.vscode/
 data_collection/data/
+data_collection/auth/
 data_collection/data/snscrape-archive
 data_collection/src/tweet_csv_processing/__pycache__/
 **/__pycache__/ 
