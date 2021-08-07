@@ -22,6 +22,8 @@ folder_snscrape_archive = os.path.join(folder_data, "snscrape-archive")
 folder_raw_tweets = os.path.join(folder_data, "tweet-csv-raw")
 folder_cleaned_tweets = os.path.join(folder_data, "tweet-csv-cleaned")
 folder_processed_tweets = os.path.join(folder_data, "processed-tweet-data")
+folder_processed_tweets_no_shared = os.path.join(
+    folder_processed_tweets, "no-shared")
 folder_price_data = os.path.join(folder_data, "price-data")
 folder_datasets = os.path.join(os.path.dirname(this_folder), "datasets")
 
@@ -32,7 +34,7 @@ file_santiment_auth = os.path.join(folder_auth, "santiment-auth.txt")
 
 folders = [folder_data, folder_snscrape_temp, folder_snscrape_archive,
            folder_raw_tweets, folder_cleaned_tweets, folder_processed_tweets,
-           folder_price_data, folder_auth, folder_datasets]
+           folder_price_data, folder_auth, folder_datasets, folder_processed_tweets_no_shared]
 
 for folder in folders:
     if not os.path.exists(folder):
