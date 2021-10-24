@@ -5,8 +5,8 @@ import time
 import os
 from datetime import date, datetime, timedelta
 
-import src.csv_processing_methods as processing
-import src.sentiment_methods as sentiment
+import csv_processing_methods as processing
+import sentiment_methods as sentiment
 
 # TODO: Things to test:
 # - order of date folders when processing

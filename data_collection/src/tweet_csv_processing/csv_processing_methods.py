@@ -23,6 +23,8 @@ def print_indexes_of_bad_format_tweets(csv_path):
         good_len = 0
         for row in reader:
             line += 1
+            # print(line)
+            # print(row)
             if line == 1:
                 good_len = len(row)
                 print(good_len)
